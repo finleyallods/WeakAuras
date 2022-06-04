@@ -27,6 +27,10 @@ function createWidget(parent, widgetName, template, posX, posY, alignX, alignY, 
     return widget
 end
 
+function setTextColor(widget, color)
+    widget:SetTextColor(nil, color)
+end
+
 function getDesc(widget)
     return widget and widget.GetWidgetDesc and widget:GetWidgetDesc() or nil
 end
