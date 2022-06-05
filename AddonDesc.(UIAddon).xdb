@@ -7,6 +7,8 @@
         <Item href="scripts/LogService.lua"/>
         <Item href="scripts/WidgetService.lua"/>
         <Item href="scripts/TimerService.lua"/>
+        <Item href="scripts/Healer.lua"/>
+        <Item href="scripts/Warrior.lua"/>
         <Item href="scripts/WeakAuras.lua"/>
     </ScriptFileRefs>
     <visObjects href=""/>
