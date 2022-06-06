@@ -112,7 +112,7 @@ function getWarriorTankRapidBlowTextColor()
     return nil
 end
 
-function getBerserkerTextColor()
+function getWarriorTankBerserkerTextColor()
     if isOnCd("Berserker") then
         return nil
     end
@@ -129,6 +129,7 @@ function evaluateWarriorTankPriority()
     evaluate("Bloody Harvest", getWarriorTankBloodyHarvestTextColor)
     evaluate("Vicious Spin", getWarriorTankViciousSpinTextColor)
     evaluate("Berserker", getWarriorTankBerserkerTextColor)
+    evaluateUtility()
 end
 
 function onWarriorTankUnitManaChanged(params)
@@ -138,7 +139,7 @@ function onWarriorTankUnitManaChanged(params)
 end
 
 function onWarriorTankCombatAdvantageChanged()
-    getWidgetByName("CombatAdvantage"):SetVal("value", getCombatAdvantage())
+    getWidgetByName("Combat Advantage"):SetVal("value", getCombatAdvantage())
     evaluateWarriorTankPriority()
 end
 
@@ -208,6 +209,7 @@ function initWarriorTank()
     addWidgetToList(createTextView("Berserker", -10, 650, "s6"))
     addWidgetToList(createTextView("Bloody Harvest", 90, 650, "s7"))
     addWidgetToList(createTextView("Trinket", 40, 625, "*"))
+    initWarriorUtility(true)
 
     setTextColor(getWidgetByName("Trinket"), COLOR_TRINKET)
 

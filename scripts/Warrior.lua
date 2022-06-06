@@ -74,7 +74,7 @@ function initWarrior()
     addWidgetToList(createTextView("Berserker", -10, 650, "s6"))
     addWidgetToList(createTextView("Bloody Harvest", 90, 650, "s7"))
     addWidgetToList(createTextView("Trinket", 40, 625, "*"))
-    initWarriorUtility()
+    initWarriorUtility(false)
 
     setTextColor(getWidgetByName("Trinket"), COLOR_TRINKET)
 

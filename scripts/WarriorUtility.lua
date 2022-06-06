@@ -1,3 +1,5 @@
+local isTank
+
 function getAdrenalineSurgeTextColor()
     if hasBuff("Adrenaline Surge") or hasBuff("Turtle") then
         return nil
@@ -38,6 +40,18 @@ function getAimedShotTextColor()
     return getEnergy() < 25 or isOnCd("Aimed Shot") and COLOR_IMPOSSIBLE or COLOR_NORMAL
 end
 
+function getBreakTextColor()
+    return isOnCd("Break") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+end
+
+function getDeliveranceTextColor()
+    return getEnergy() < 21 or isOnCd("Deliverance") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+end
+
+function getHarpoonTextColor()
+    return isOnCd("Harpoon") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+end
+
 function evaluateUtility()
     evaluate("Turtle", getTurtleTextColor)
     evaluate("AdrenalineSurge", getAdrenalineSurgeTextColor)
@@ -45,9 +59,16 @@ function evaluateUtility()
     evaluate("Mad Leap", getMadLeapTextColor)
     evaluate("Mighty Leap", getMightyLeapTextColor)
     evaluate("Aimed Shot", getAimedShotTextColor)
+
+    if isTank then
+        evaluate("Break", getBreakTextColor)
+        evaluate("Deliverance", getDeliveranceTextColor)
+        evaluate("Harpoon", getHarpoonTextColor)
+    end
 end
 
-function initWarriorUtility()
+function initWarriorUtility(initTank)
+    isTank = initTank
     addWidgetToList(createTextView("Turtle", -175, 485, "^"))
     addWidgetToList(createTextView("AdrenalineSurge", -175, 515, "v"))
     addWidgetToList(createTextView("Charge", -300, 550, "Q"))
@@ -59,6 +80,16 @@ function initWarriorUtility()
     getWidgetByName("Mad Leap"):SetTextScale(0.65)
     getWidgetByName("Mighty Leap"):SetTextScale(0.75)
     getWidgetByName("Aimed Shot"):SetTextScale(0.65)
+
+    if isTank then
+        addWidgetToList(createTextView("Break", -300, 675, "E"))
+        addWidgetToList(createTextView("Deliverance", -285, 700, "sE"))
+        addWidgetToList(createTextView("Harpoon", -225, 575, "G"))
+
+        getWidgetByName("Break"):SetTextScale(0.75)
+        getWidgetByName("Deliverance"):SetTextScale(0.65)
+        getWidgetByName("Harpoon"):SetTextScale(0.75)
+    end
 end
 
 function getWarriorUtilityBuffs()
@@ -66,7 +97,7 @@ function getWarriorUtilityBuffs()
 end
 
 function getWarriorUtilityCDMap()
-    return {
+    local cdMap = {
         [37] = "Turtle",
         [38] = "Adrenaline Surge",
         [7] = "Charge",
@@ -74,4 +105,11 @@ function getWarriorUtilityCDMap()
         [27] = "Aimed Shot",
         [31] = "Mad Leap",
     }
+    if isTank then
+        cdMap[8] = "Break"
+        cdMap[32]= "Deliverance"
+        cdMap[10] = "Harpoon"
+    end
+
+    return cdMap
 end
