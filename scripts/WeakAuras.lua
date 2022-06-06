@@ -128,6 +128,7 @@ function initClass()
     if currentSpec ~= nil then
         local delegate = initMap[currentSpec]
         if delegate ~= nil then
+            newState()
             delegate()
         end
     else

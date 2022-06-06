@@ -28,7 +28,6 @@ function evaluateUtility()
 end
 
 function initWarriorUtility()
-    newWarriorState()
     setWtTurtle(createTextView("Turtle", -175, 485, "^"))
     setWtAdrenalineSurge(createTextView("AdrenalineSurge", -175, 515, "v"))
 end

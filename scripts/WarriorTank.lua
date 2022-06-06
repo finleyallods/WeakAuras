@@ -147,8 +147,8 @@ local CD_SETTER_MAP = {
 }
 
 function onWarriorTankActionPanelElementEffect(params)
-    checkAllCDs(CD_SETTER_MAP, params, setWarriorCD)
-    checkAllCDs(getWarriorUtilityCDMap(), params, setWarriorCD)
+    checkAllCDs(CD_SETTER_MAP, params, setCD)
+    checkAllCDs(getWarriorUtilityCDMap(), params, setCD)
     evaluateWarriorTankPriority()
 end
 
