@@ -3,9 +3,15 @@ local wtChat
 function consoleLog(message)
     if common.IsWString(message) then
         sendMessage(userMods.FromWString(message))
+    elseif (type(message) == "table") then
+        for key, value in pairs(message) do
+            sendMessage(key .. ": {")
+            consoleLog(value)
+            sendMessage("}")
+        end
+    else
+        sendMessage(tostring(message))
     end
-
-    sendMessage(tostring(message))
 end
 
 function debugMessage(message)

@@ -1,5 +1,5 @@
 function geAnimalPounceTextColor()
-    if isAnimalPounceOnCooldown() then
+    if isOnCd("Animal Pounce") then
         return nil
     end
 
@@ -7,7 +7,7 @@ function geAnimalPounceTextColor()
         return nil
     end
 
-    if hasBoodyHarvestBuff() then
+    if hasBuff("Bloody Harvest") then
         return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or nil
     end
 
@@ -15,11 +15,11 @@ function geAnimalPounceTextColor()
 end
 
 function getDeadlyLungeTextColor()
-    if isDeadlyLungeOnCooldown() then
+    if isOnCd("Deadly Lunge") then
         return nil
     end
 
-    if hasBoodyHarvestBuff() then
+    if hasBuff("Bloody Harvest") then
         if avatar.GetWarriorCombatAdvantage() < 25 then
             return COLOR_IMPOSSIBLE
         else
@@ -35,7 +35,7 @@ function getDeadlyLungeTextColor()
 end
 
 function getBloodyHarvestTextColor()
-    if isBloodyHarvestOnCooldown() then
+    if isOnCd("Bloody Harvest") then
         return nil
     end
 
@@ -43,7 +43,7 @@ function getBloodyHarvestTextColor()
         return COLOR_IMPOSSIBLE
     end
 
-    if avatar.GetWarriorCombatAdvantage() < 45 or isDeadlyLungeOnCooldown() then
+    if avatar.GetWarriorCombatAdvantage() < 45 or isOnCd("Deadly Lunge") then
         return COLOR_BAD
     end
 
@@ -51,7 +51,7 @@ function getBloodyHarvestTextColor()
 end
 
 function getJaggedSliceTextColor()
-    if isJaggedSliceOnCooldown() then
+    if isOnCd("Jagged Slice") then
         return nil
     end
 
@@ -63,7 +63,7 @@ function getJaggedSliceTextColor()
 end
 
 function getDestructiveAttackTextColor()
-    if hasFlamingBladeBuff() then
+    if hasBuff("Flaming Blade") then
         return nil
     end
 
@@ -71,7 +71,7 @@ function getDestructiveAttackTextColor()
         return getEnergy() >= 39 and COLOR_BAD or COLOR_IMPOSSIBLE
     end
 
-    if not hasBoodyHarvestBuff()
+    if not hasBuff("Bloody Harvest")
     then
         return getEnergy() >= 39 and COLOR_NORMAL or COLOR_IMPOSSIBLE
     end
@@ -80,7 +80,7 @@ function getDestructiveAttackTextColor()
 end
 
 function getFractureTextColor()
-    if not hasFlamingBladeBuff() then
+    if not hasBuff("Flaming Blade") then
         return nil
     end
 
@@ -88,7 +88,7 @@ function getFractureTextColor()
         return getEnergy() >= 29 and COLOR_BAD or COLOR_IMPOSSIBLE
     end
 
-    if not hasBoodyHarvestBuff()
+    if not hasBuff("Bloody Harvest")
     then
         return getEnergy() >= 29 and COLOR_NORMAL or COLOR_IMPOSSIBLE
     end
@@ -97,11 +97,11 @@ function getFractureTextColor()
 end
 
 function getRapidBlowTextColor()
-    if not isDeadlyLungeOnCooldown() then
+    if not isOnCd("Deadly Lunge") then
         return nil
     end
 
-    if hasBoodyHarvestBuff() then
+    if hasBuff("Bloody Harvest") then
         return avatar.GetWarriorCombatAdvantage() >= 45 and COLOR_NORMAL or COLOR_IMPOSSIBLE
     end
 
@@ -109,27 +109,11 @@ function getRapidBlowTextColor()
         return COLOR_NORMAL
     end
 
-    if avatar.GetWarriorCombatAdvantage() > 75 and hasFlamingBladeBuff() then
+    if avatar.GetWarriorCombatAdvantage() > 75 and hasBuff("Flaming Blade") then
         return COLOR_NORMAL
     end
 
     return nil
-end
-
-function evaluate(widgetGetter, textColorGetter)
-    local widget = widgetGetter and widgetGetter()
-
-    if widget == nil then
-        return
-    end
-
-    local textColor = textColorGetter()
-    if textColor ~= nil then
-        show(widget)
-        setTextColor(widget, textColor)
-    else
-        hide(widget)
-    end
 end
 
 function evaluatePriority()
@@ -140,51 +124,36 @@ function evaluatePriority()
     evaluate(getWtRapidBlow, getRapidBlowTextColor)
     evaluate(getWtBloodyHarvest, getBloodyHarvestTextColor)
     evaluate(getWtAnimalPounce, geAnimalPounceTextColor)
+    evaluateUtility()
 end
 
 function onWarriorUnitManaChanged(params)
     if isMe(params.unitId) then
         evaluatePriority()
-        evaluateUtility()
     end
 end
 
 function onWarriorCombatAdvantageChanged()
     getWtCombatAdvantage():SetVal("value", getCombatAdvantage())
     evaluatePriority()
-    evaluateUtility()
 end
 
 local CD_SETTER_MAP = {
-    [2] = setJaggedSliceCooldown,
-    [3] = setAnimalPounceCooldown,
-    [6] = setDeadlyLungeCooldown,
-    [30] = setBloodyHarvestCooldown
+    [2] = "Jagged Slice",
+    [3] = "Animal Pounce",
+    [6] = "Deadly Lunge",
+    [29] = "Berserker",
+    [30] = "Bloody Harvest"
 }
 
 function onWarriorActionPanelElementEffect(params)
-    if params.effect < 1 or params.effect > 2 then
-        return
-    end
-
-    if params.effect == 1 and params.duration < 1500 then
-        return
-    end
-
-    local timeStamp = params.effect == 1 and common.GetLocalDateTime() or nil
-
-    for key, value in pairs(CD_SETTER_MAP) do
-        if params.index == key then
-            value(timeStamp, params.duration)
-        end
-    end
-
-    if params.index == 29 then
-        getWtBerserker():Show(params.effect == 2)
-    end
-
-    onWarriorUtilityActionPanelElementEffect(params)
+    checkAllCDs(CD_SETTER_MAP, params, setWarriorCD)
+    checkAllCDs(getWarriorUtilityCDMap(), params, setWarriorCD)
     evaluatePriority()
+end
+
+function getWarriorBuffs()
+    return {"Bloody Harvest", "Flaming Blade"}
 end
 
 function onWarriorBuffAdded(params)
@@ -192,15 +161,8 @@ function onWarriorBuffAdded(params)
         return
     end
 
-    if userMods.FromWString(params.buffName) == "Bloody Harvest" then
-        setBloodyHarvestBuff(params.buffId)
-        evaluatePriority()
-    elseif userMods.FromWString(params.buffName) == "Flaming Blade" then
-        setFlamingBladeBuffId(params.buffId)
-        evaluatePriority()
-    else
-        onWarriorUtilityBuffAdded(params)
-    end
+    checkAllBuffs(getWarriorBuffs(), params, true)
+    checkAllBuffs(getWarriorUtilityBuffs(), params, true)
 end
 
 function onWarriorBuffRemoved(params)
@@ -208,15 +170,8 @@ function onWarriorBuffRemoved(params)
         return
     end
 
-    if userMods.FromWString(params.buffName) == "Bloody Harvest" then
-        setBloodyHarvestBuff(nil)
-        evaluatePriority()
-    elseif userMods.FromWString(params.buffName) == "Flaming Blade" then
-        setFlamingBladeBuffId(nil)
-        evaluatePriority()
-    else
-        onWarriorUtilityBuffRemoved(params)
-    end
+    checkAllBuffs(getWarriorBuffs(), params, false)
+    checkAllBuffs(getWarriorUtilityBuffs(), params, false)
 end
 
 function onWarriorEventEquipmentItemEffect(params)
@@ -237,7 +192,6 @@ function onWarriorEventEquipmentItemEffect(params)
 end
 
 function initWarrior()
-    setMyId(avatar.GetId())
     setWtCombatAdvantage(createTextView("CombatAdvantage", 40, 500, getCombatAdvantage()))
     setWtDestructiveAttack(createTextView("DestructiveAttack", 40, 425, "1"))
     setWtFracture(createTextView("Fracture", 90, 450, "2"))

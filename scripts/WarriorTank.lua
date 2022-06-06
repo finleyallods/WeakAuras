@@ -1,5 +1,5 @@
 function getWarriorTankViciousSpinTextColor()
-    if isViciousSpinOnCooldown() then
+    if isOnCd("Vicious Spin") then
         return nil
     end
 
@@ -11,11 +11,11 @@ function getWarriorTankViciousSpinTextColor()
 end
 
 function getWarriorTankDeadlyLungeTextColor()
-    if isDeadlyLungeOnCooldown() then
+    if isOnCd("Deadly Lunge") then
         return nil
     end
 
-    if hasBoodyHarvestBuff() then
+    if hasBuff("Bloody Harvest") then
         if avatar.GetWarriorCombatAdvantage() < 25 then
             return COLOR_IMPOSSIBLE
         else
@@ -31,7 +31,7 @@ function getWarriorTankDeadlyLungeTextColor()
 end
 
 function getWarriorTankBloodyHarvestTextColor()
-    if isBloodyHarvestOnCooldown() then
+    if isOnCd("Bloody Harvest") then
         return nil
     end
 
@@ -39,7 +39,7 @@ function getWarriorTankBloodyHarvestTextColor()
         return COLOR_IMPOSSIBLE
     end
 
-    if avatar.GetWarriorCombatAdvantage() < 45 or isDeadlyLungeOnCooldown() then
+    if avatar.GetWarriorCombatAdvantage() < 45 or isOnCd("Deadly Lunge") then
         return COLOR_BAD
     end
 
@@ -47,7 +47,7 @@ function getWarriorTankBloodyHarvestTextColor()
 end
 
 function getWarriorTankTrampTextColor()
-    if isTrampOnCooldown() then
+    if isOnCd("Tramp") then
         return nil
     end
 
@@ -59,7 +59,7 @@ function getWarriorTankTrampTextColor()
 end
 
 function getWarriorTankDestructiveAttackTextColor()
-    if hasFlamingBladeBuff() then
+    if hasBuff("Flaming Blade") then
         return nil
     end
 
@@ -67,7 +67,7 @@ function getWarriorTankDestructiveAttackTextColor()
         return getEnergy() >= 39 and COLOR_BAD or COLOR_IMPOSSIBLE
     end
 
-    if not hasBoodyHarvestBuff()
+    if not hasBuff("Bloody Harvest")
     then
         return getEnergy() >= 39 and COLOR_NORMAL or COLOR_IMPOSSIBLE
     end
@@ -76,7 +76,7 @@ function getWarriorTankDestructiveAttackTextColor()
 end
 
 function getWarriorTankFractureTextColor()
-    if not hasFlamingBladeBuff() then
+    if not hasBuff("Flaming Blade") then
         return nil
     end
 
@@ -84,7 +84,7 @@ function getWarriorTankFractureTextColor()
         return getEnergy() >= 29 and COLOR_BAD or COLOR_IMPOSSIBLE
     end
 
-    if not hasBoodyHarvestBuff()
+    if not hasBuff("Bloody Harvest")
     then
         return getEnergy() >= 29 and COLOR_NORMAL or COLOR_IMPOSSIBLE
     end
@@ -93,11 +93,11 @@ function getWarriorTankFractureTextColor()
 end
 
 function getWarriorTankRapidBlowTextColor()
-    if not isDeadlyLungeOnCooldown() then
+    if not isOnCd("Deadly Lunge") then
         return nil
     end
 
-    if hasBoodyHarvestBuff() then
+    if hasBuff("Bloody Harvest") then
         return avatar.GetWarriorCombatAdvantage() >= 45 and COLOR_NORMAL or COLOR_IMPOSSIBLE
     end
 
@@ -105,37 +105,26 @@ function getWarriorTankRapidBlowTextColor()
         return COLOR_NORMAL
     end
 
-    if avatar.GetWarriorCombatAdvantage() > 75 and hasFlamingBladeBuff() then
+    if avatar.GetWarriorCombatAdvantage() > 75 and hasBuff("Flaming Blade") then
         return COLOR_NORMAL
     end
 
     return nil
 end
 
-function evaluateWarriorTank(widgetGetter, textColorGetter)
-    local widget = widgetGetter and widgetGetter()
-
-    if widget == nil then
-        return
-    end
-
-    local textColor = textColorGetter()
-    if textColor ~= nil then
-        show(widget)
-        setTextColor(widget, textColor)
-    else
-        hide(widget)
-    end
+function getWarriorTankBerserkerTextColor()
+    return isOnCd("Berserker")
 end
 
 function evaluateWarriorTankPriority()
-    evaluateWarriorTank(getWtDeadlyLunge, getWarriorTankDeadlyLungeTextColor)
-    evaluateWarriorTank(getWtTramp, getWarriorTankTrampTextColor)
-    evaluateWarriorTank(getWtDestructiveAttack, getWarriorTankDestructiveAttackTextColor)
-    evaluateWarriorTank(getWtFracture, getWarriorTankFractureTextColor)
-    evaluateWarriorTank(getWtRapidBlow, getWarriorTankRapidBlowTextColor)
-    evaluateWarriorTank(getWtBloodyHarvest, getWarriorTankBloodyHarvestTextColor)
-    evaluateWarriorTank(getWtViciousSpin, getWarriorTankViciousSpinTextColor)
+    evaluate(getWtDeadlyLunge, getWarriorTankDeadlyLungeTextColor)
+    evaluate(getWtTramp, getWarriorTankTrampTextColor)
+    evaluate(getWtDestructiveAttack, getWarriorTankDestructiveAttackTextColor)
+    evaluate(getWtFracture, getWarriorTankFractureTextColor)
+    evaluate(getWtRapidBlow, getWarriorTankRapidBlowTextColor)
+    evaluate(getWtBloodyHarvest, getWarriorTankBloodyHarvestTextColor)
+    evaluate(getWtViciousSpin, getWarriorTankViciousSpinTextColor)
+    evaluate(getWtBerserker, getWarriorTankBerserkerTextColor)
 end
 
 function onWarriorTankUnitManaChanged(params)
@@ -150,34 +139,21 @@ function onWarriorTankCombatAdvantageChanged()
 end
 
 local CD_SETTER_MAP = {
-    [2] = setTrampCooldown,
-    [4] = setViciousSpinCooldown,
-    [6] = setDeadlyLungeCooldown,
-    [30] = setBloodyHarvestCooldown
+    [2] = "Tramp",
+    [4] = "Vicious Spin",
+    [6] = "Deadly Lunge",
+    [29] = "Berserker",
+    [30] = "Bloody Harvest"
 }
 
 function onWarriorTankActionPanelElementEffect(params)
-    if params.effect < 1 or params.effect > 2 then
-        return
-    end
-
-    if params.effect == 1 and params.duration < 1500 then
-        return
-    end
-
-    local timeStamp = params.effect == 1 and common.GetLocalDateTime() or nil
-
-    for key, value in pairs(CD_SETTER_MAP) do
-        if params.index == key then
-            value(timeStamp, params.duration)
-        end
-    end
-
-    if params.index == 29 then
-        getWtBerserker():Show(params.effect == 2)
-    end
-
+    checkAllCDs(CD_SETTER_MAP, params, setWarriorCD)
+    checkAllCDs(getWarriorUtilityCDMap(), params, setWarriorCD)
     evaluateWarriorTankPriority()
+end
+
+function getWarriorTankBuffs()
+    return {"Bloody Harvest", "Flaming Blade"}
 end
 
 function onWarriorTankBuffAdded(params)
@@ -185,13 +161,8 @@ function onWarriorTankBuffAdded(params)
         return
     end
 
-    if userMods.FromWString(params.buffName) == "Bloody Harvest" then
-        setBloodyHarvestBuff(params.buffId)
-        evaluateWarriorTankPriority()
-    elseif userMods.FromWString(params.buffName) == "Flaming Blade" then
-        setFlamingBladeBuffId(params.buffId)
-        evaluateWarriorTankPriority()
-    end
+    checkAllBuffs(getWarriorTankBuffs(), params, true)
+    checkAllBuffs(getWarriorUtilityBuffs(), params, true)
 end
 
 function onWarriorTankBuffRemoved(params)
@@ -199,13 +170,8 @@ function onWarriorTankBuffRemoved(params)
         return
     end
 
-    if userMods.FromWString(params.buffName) == "Bloody Harvest" then
-        setBloodyHarvestBuff(nil)
-        evaluateWarriorTankPriority()
-    elseif userMods.FromWString(params.buffName) == "Flaming Blade" then
-        setFlamingBladeBuffId(nil)
-        evaluateWarriorTankPriority()
-    end
+    checkAllBuffs(getWarriorTankBuffs(), params, false)
+    checkAllBuffs(getWarriorUtilityBuffs(), params, false)
 end
 
 function onWarriorTankEventEquipmentItemEffect(params)
@@ -226,7 +192,6 @@ function onWarriorTankEventEquipmentItemEffect(params)
 end
 
 function initWarriorTank()
-    setMyId(avatar.GetId())
     setWtCombatAdvantage(createTextView("CombatAdvantage", 40, 500, getCombatAdvantage()))
     setWtDestructiveAttack(createTextView("DestructiveAttack", 40, 425, "1"))
     setWtFracture(createTextView("Fracture", 90, 450, "2"))

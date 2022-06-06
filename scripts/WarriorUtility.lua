@@ -1,9 +1,9 @@
 function getAdrenalineSurgeTextColor()
-    if hasAdrenalineSurgeBuff() or hasTurtleBuff() then
+    if hasBuff("Adrenaline Surge") or hasBuff("Turtle") then
         return nil
     end
 
-    if getEnergy() < 25 or isAdrenalineSurgeOnCooldown() then
+    if getEnergy() < 25 or isOnCd("Adrenaline Surge") then
         return COLOR_IMPOSSIBLE
     end
 
@@ -11,11 +11,11 @@ function getAdrenalineSurgeTextColor()
 end
 
 function getTurtleTextColor()
-    if hasAdrenalineSurgeBuff() or hasTurtleBuff() then
+    if hasBuff("Adrenaline Surge") or hasBuff("Turtle") then
         return nil
     end
 
-    if getEnergy() < 25 or isTurtleOnCooldown() then
+    if getEnergy() < 25 or isOnCd("Turtle") then
         return COLOR_IMPOSSIBLE
     end
 
@@ -28,36 +28,21 @@ function evaluateUtility()
 end
 
 function initWarriorUtility()
+    newWarriorState()
     setWtTurtle(createTextView("Turtle", -175, 485, "^"))
     setWtAdrenalineSurge(createTextView("AdrenalineSurge", -175, 515, "v"))
-
-    evaluateUtility()
 end
 
-function onWarriorUtilityBuffAdded(params)
-    if userMods.FromWString(params.buffName) == "Turtle" then
-        setTurtleBuffId(params.buffId)
-        evaluateUtility()
-    elseif userMods.FromWString(params.buffName) == "Adrenaline Surge" then
-        setAdrenalineSurgeBuffId(params.buffId)
-        evaluateUtility()
-    end
+function getWarriorUtilityBuffs()
+    return {"Turtle", "Adrenaline Surge"}
 end
 
-function onWarriorUtilityBuffRemoved(params)
-    if userMods.FromWString(params.buffName) == "Turtle" then
-        setTurtleBuffId(nil)
-        evaluateUtility()
-    elseif userMods.FromWString(params.buffName) == "Adrenaline Surge" then
-        setAdrenalineSurgeBuffId(nil)
-        evaluateUtility()
-    end
+function getWarriorUtilityCDMap()
+    return {
+        [37] = "Turtle",
+        [38] = "Adrenaline Surge",
+    }
 end
-
-local CD_SETTER_MAP = {
-    [37] = setTurtleCooldown,
-    [38] = setAdrenalineSurgeCooldown,
-}
 
 function onWarriorUtilityActionPanelElementEffect(params)
     if params.effect < 1 or params.effect > 2 then
@@ -75,6 +60,4 @@ function onWarriorUtilityActionPanelElementEffect(params)
             value(timeStamp, params.duration)
         end
     end
-
-    evaluateUtility()
 end
