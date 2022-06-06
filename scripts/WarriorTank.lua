@@ -1,20 +1,16 @@
-function geAnimalPounceTextColor()
-    if isAnimalPounceOnCooldown() then
+function getWarriorTankViciousSpinTextColor()
+    if isViciousSpinOnCooldown() then
         return nil
     end
 
-    if avatar.GetWarriorCombatAdvantage() > 70 then
+    if getEnergy() < 47 then
         return nil
     end
 
-    if hasBoodyHarvestBuff() then
-        return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or nil
-    end
-
-    return COLOR_NORMAL
+    return COLOR_AOE
 end
 
-function getDeadlyLungeTextColor()
+function getWarriorTankDeadlyLungeTextColor()
     if isDeadlyLungeOnCooldown() then
         return nil
     end
@@ -34,7 +30,7 @@ function getDeadlyLungeTextColor()
     return nil
 end
 
-function getBloodyHarvestTextColor()
+function getWarriorTankBloodyHarvestTextColor()
     if isBloodyHarvestOnCooldown() then
         return nil
     end
@@ -50,19 +46,19 @@ function getBloodyHarvestTextColor()
     return COLOR_NORMAL
 end
 
-function getJaggedSliceTextColor()
-    if isJaggedSliceOnCooldown() then
+function getWarriorTankTrampTextColor()
+    if isTrampOnCooldown() then
         return nil
     end
 
-    if getEnergy() < 24 then
+    if avatar.GetWarriorCombatAdvantage() < 55 then
         return COLOR_IMPOSSIBLE
     end
 
-    return COLOR_DOT
+    return COLOR_NORMAL
 end
 
-function getDestructiveAttackTextColor()
+function getWarriorTankDestructiveAttackTextColor()
     if hasFlamingBladeBuff() then
         return nil
     end
@@ -79,7 +75,7 @@ function getDestructiveAttackTextColor()
     return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or COLOR_BAD
 end
 
-function getFractureTextColor()
+function getWarriorTankFractureTextColor()
     if not hasFlamingBladeBuff() then
         return nil
     end
@@ -96,7 +92,7 @@ function getFractureTextColor()
     return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or COLOR_BAD
 end
 
-function getRapidBlowTextColor()
+function getWarriorTankRapidBlowTextColor()
     if not isDeadlyLungeOnCooldown() then
         return nil
     end
@@ -116,7 +112,7 @@ function getRapidBlowTextColor()
     return nil
 end
 
-function evaluate(widgetGetter, textColorGetter)
+function evaluateWarriorTank(widgetGetter, textColorGetter)
     local widget = widgetGetter and widgetGetter()
 
     if widget == nil then
@@ -132,35 +128,35 @@ function evaluate(widgetGetter, textColorGetter)
     end
 end
 
-function evaluatePriority()
-    evaluate(getWtDeadlyLunge, getDeadlyLungeTextColor)
-    evaluate(getWtJaggedSlice, getJaggedSliceTextColor)
-    evaluate(getWtDestructiveAttack, getDestructiveAttackTextColor)
-    evaluate(getWtFracture, getFractureTextColor)
-    evaluate(getWtRapidBlow, getRapidBlowTextColor)
-    evaluate(getWtBloodyHarvest, getBloodyHarvestTextColor)
-    evaluate(getWtAnimalPounce, geAnimalPounceTextColor)
+function evaluateWarriorTankPriority()
+    evaluateWarriorTank(getWtDeadlyLunge, getWarriorTankDeadlyLungeTextColor)
+    evaluateWarriorTank(getWtTramp, getWarriorTankTrampTextColor)
+    evaluateWarriorTank(getWtDestructiveAttack, getWarriorTankDestructiveAttackTextColor)
+    evaluateWarriorTank(getWtFracture, getWarriorTankFractureTextColor)
+    evaluateWarriorTank(getWtRapidBlow, getWarriorTankRapidBlowTextColor)
+    evaluateWarriorTank(getWtBloodyHarvest, getWarriorTankBloodyHarvestTextColor)
+    evaluateWarriorTank(getWtViciousSpin, getWarriorTankViciousSpinTextColor)
 end
 
-function onWarriorUnitManaChanged(params)
+function onWarriorTankUnitManaChanged(params)
     if isMe(params.unitId) then
-        evaluatePriority()
+        evaluateWarriorTankPriority()
     end
 end
 
-function onWarriorCombatAdvantageChanged()
+function onWarriorTankCombatAdvantageChanged()
     getWtCombatAdvantage():SetVal("value", getCombatAdvantage())
-    evaluatePriority()
+    evaluateWarriorTankPriority()
 end
 
 local CD_SETTER_MAP = {
-    [2] = setJaggedSliceCooldown,
-    [3] = setAnimalPounceCooldown,
+    [2] = setTrampCooldown,
+    [4] = setViciousSpinCooldown,
     [6] = setDeadlyLungeCooldown,
     [30] = setBloodyHarvestCooldown
 }
 
-function onWarriorActionPanelElementEffect(params)
+function onWarriorTankActionPanelElementEffect(params)
     if params.effect < 1 or params.effect > 2 then
         return
     end
@@ -181,38 +177,38 @@ function onWarriorActionPanelElementEffect(params)
         getWtBerserker():Show(params.effect == 2)
     end
 
-    evaluatePriority()
+    evaluateWarriorTankPriority()
 end
 
-function onWarriorBuffAdded(params)
+function onWarriorTankBuffAdded(params)
     if not isMe(params.objectId) then
         return
     end
 
     if userMods.FromWString(params.buffName) == "Bloody Harvest" then
         setBloodyHarvestBuff(params.buffId)
-        evaluatePriority()
+        evaluateWarriorTankPriority()
     elseif userMods.FromWString(params.buffName) == "Flaming Blade" then
         setFlamingBladeBuffId(params.buffId)
-        evaluatePriority()
+        evaluateWarriorTankPriority()
     end
 end
 
-function onWarriorBuffRemoved(params)
+function onWarriorTankBuffRemoved(params)
     if not isMe(params.objectId) then
         return
     end
 
     if userMods.FromWString(params.buffName) == "Bloody Harvest" then
         setBloodyHarvestBuff(nil)
-        evaluatePriority()
+        evaluateWarriorTankPriority()
     elseif userMods.FromWString(params.buffName) == "Flaming Blade" then
         setFlamingBladeBuffId(nil)
-        evaluatePriority()
+        evaluateWarriorTankPriority()
     end
 end
 
-function onWarriorEventEquipmentItemEffect(params)
+function onWarriorTankEventEquipmentItemEffect(params)
     if params.slot ~= DRESS_SLOT_TRINKET or params.slotType ~= ITEM_CONT_EQUIPMENT then
         return
     end
@@ -229,13 +225,13 @@ function onWarriorEventEquipmentItemEffect(params)
     getWtTrinket():Show(activate)
 end
 
-function initWarrior()
+function initWarriorTank()
     setMyId(avatar.GetId())
     setWtCombatAdvantage(createTextView("CombatAdvantage", 40, 500, getCombatAdvantage()))
     setWtDestructiveAttack(createTextView("DestructiveAttack", 40, 425, "1"))
     setWtFracture(createTextView("Fracture", 90, 450, "2"))
-    setWtJaggedSlice(createTextView("JaggedSlice", 110, 500, "3"))
-    setWtAnimalPounce(createTextView("AnimalPounce", -10, 450, "4"))
+    setWtTramp(createTextView("Tramp", 110, 500, "3"))
+    setWtViciousSpin(createTextView("ViciousSpin", -30, 500, "#"))
     setWtRapidBlow(createTextView("RapidBlow", -10, 550, "6"))
     setWtDeadlyLunge(createTextView("DeadlyLunge", 90, 550, "7"))
     setWtBerserker(createTextView("Berserker", -10, 650, "s6"))
@@ -244,5 +240,5 @@ function initWarrior()
 
     setTextColor(getWtTrinket(), COLOR_TRINKET)
 
-    evaluatePriority()
+    evaluateWarriorTankPriority()
 end

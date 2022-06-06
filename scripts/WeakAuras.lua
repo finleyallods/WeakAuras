@@ -1,28 +1,57 @@
 local myId
+local currentSpec
+
+local aspectMAP = {
+    DPS = "Aspect of Assault",
+    TANK = "Aspect of Defense"
+}
 
 local initMap = {
-    WARRIOR = initWarrior,
-    PRIEST = initHealer
+    WARRIOR_DPS = initWarrior,
+    WARRIOR_TANK = initWarriorTank,
+    PRIEST_DPS = initHealer
 }
 
 local onBuffAddedMap = {
-    WARRIOR = onWarriorBuffAdded,
-    PRIEST = nil
+    WARRIOR_DPS = onWarriorBuffAdded,
+    WARRIOR_TANK = onWarriorTankBuffAdded,
+    PRIEST_DPS = nil
 }
 
 local onBuffRemovedMap = {
-    WARRIOR = onWarriorBuffRemoved,
-    PRIEST = nil
+    WARRIOR_DPS = onWarriorBuffRemoved,
+    WARRIOR_TANK = onWarriorTankBuffRemoved,
+    PRIEST_DPS = nil
 }
 
 local onActionPanelElementEffectMap = {
-    WARRIOR = onWarriorActionPanelElementEffect,
-    PRIEST = onPriestActionPanelElementEffect
+    WARRIOR_DPS = onWarriorActionPanelElementEffect,
+    WARRIOR_TANK = onWarriorTankActionPanelElementEffect,
+    PRIEST_DPS = onPriestActionPanelElementEffect
 }
 
 local onActionPanelElementChangedMap = {
-    WARRIOR = nil,
-    PRIEST = nil
+    WARRIOR_DPS = nil,
+    WARRIOR_TANK = nil,
+    PRIEST_DPS = nil
+}
+
+local onWarriorCombatAdvantageChangedMap = {
+    WARRIOR_DPS = onWarriorCombatAdvantageChanged,
+    WARRIOR_TANK = onWarriorTankCombatAdvantageChanged,
+    PRIEST_DPS = nil
+}
+
+local onUnitManaChangedMap = {
+    WARRIOR_DPS = onWarriorUnitManaChanged,
+    WARRIOR_TANK = onWarriorTankUnitManaChanged,
+    PRIEST_DPS = nil
+}
+
+local onEventEquipmentItemEffectMap = {
+    WARRIOR_DPS = onWarriorEventEquipmentItemEffect,
+    WARRIOR_TANK = onWarriorTankEventEquipmentItemEffect,
+    PRIEST_DPS = nil
 }
 
 function delegateEvent(params, delegate)
@@ -36,61 +65,89 @@ function delegateEvent(params, delegate)
 end
 
 function onBuffAdded(params)
-    if isAspectOfAssault(params.buffName) then
-        initClass()
-    end
-
-    delegateEvent(params, onBuffAddedMap[avatar.GetClass()])
-end
-
-function onBuffRemoved(params)
-    if isAspectOfAssault(params.buffName) then
-        initClass()
-    end
-
-    delegateEvent(params, onBuffRemovedMap[avatar.GetClass()])
-end
-
-function onActionPanelElementEffect(params)
-    delegateEvent(params, onActionPanelElementEffectMap[avatar.GetClass()])
-end
-
-function onActionPanelElementChanged(params)
-    delegateEvent(params, onActionPanelElementChangedMap[avatar.GetClass()])
-end
-
-function hasAspect()
-    for i, buffId in pairs(object.GetBuffs(myId)) do
-        if isAspectOfAssault(object.GetBuffInfo(buffId).name) then
-            return true
+    for aspectKey, aspectValue in pairs(aspectMAP) do
+        if userMods.FromWString(params.buffName) == aspectValue then
+            debugMessage(aspectValue.." was added.")
+            initClass()
         end
     end
 
-    return false
+    delegateEvent(params, onBuffAddedMap[currentSpec])
 end
 
-function isAspectOfAssault(buffName)
-    return userMods.FromWString(buffName) == "Aspect of Assault"
+function onBuffRemoved(params)
+    for aspectKey, aspectValue in pairs(aspectMAP) do
+        if userMods.FromWString(params.buffName) == aspectValue then
+            debugMessage(aspectValue.." was removed.")
+            initClass()
+        end
+    end
+
+    delegateEvent(params, onBuffRemovedMap[currentSpec])
+end
+
+function onActionPanelElementEffect(params)
+    delegateEvent(params, onActionPanelElementEffectMap[currentSpec])
+end
+
+function onActionPanelElementChanged(params)
+    delegateEvent(params, onActionPanelElementChangedMap[currentSpec])
+end
+
+function onWarriorCombatAdvantageChanged(params)
+    delegateEvent(params, onWarriorCombatAdvantageChangedMap[currentSpec])
+end
+
+function onUnitManaChanged(params)
+    delegateEvent(params, onUnitManaChangedMap[currentSpec])
+end
+
+function onEventEquipmentItemEffect(params)
+    delegateEvent(params, onEventEquipmentItemEffectMap[currentSpec])
+end
+
+function onTalentsChanged()
+    debugMessage("Talents have changed.")
+    initClass()
+end
+
+function getAspect()
+    for i, buffId in pairs(object.GetBuffs(myId)) do
+        for aspectKey, aspectValue in pairs(aspectMAP) do
+            if userMods.FromWString(object.GetBuffInfo(buffId).name) == aspectValue then
+                return avatar.GetClass() .. "_" .. aspectKey
+            end
+        end
+    end
+
+    return nil
 end
 
 function initClass()
-    myId = avatar.GetId()
-    if hasAspect() then
-        local delegate = initMap[avatar.GetClass()]
-
+    currentSpec = getAspect()
+    if currentSpec ~= nil then
+        local delegate = initMap[currentSpec]
         if delegate ~= nil then
             delegate()
         end
     else
-        sendMessage("Aspect is missing!")
+        sendMessage("Aspect is missing.")
+        clearWarrior()
     end
 end
 
 function init()
+    myId = avatar.GetId()
     common.RegisterEventHandler(onBuffAdded, "EVENT_OBJECT_BUFF_ADDED")
     common.RegisterEventHandler(onBuffRemoved, "EVENT_OBJECT_BUFF_REMOVED")
     common.RegisterEventHandler(onActionPanelElementEffect, "EVENT_ACTION_PANEL_ELEMENT_EFFECT")
     common.RegisterEventHandler(onActionPanelElementChanged, "EVENT_ACTION_PANEL_ELEMENT_CHANGED")
+    common.RegisterEventHandler(onWarriorCombatAdvantageChanged, "EVENT_AVATAR_WARRIOR_COMBAT_ADVANTAGE_CHANGED")
+    common.RegisterEventHandler(onUnitManaChanged, " EVENT_UNIT_MANA_CHANGED")
+    common.RegisterEventHandler(onEventEquipmentItemEffect, "EVENT_EQUIPMENT_ITEM_EFFECT")
+    common.RegisterEventHandler(onTalentsChanged, "EVENT_TALENTS_CHANGED")
+    common.RegisterEventHandler(onTalentsChanged, "EVENT_AVATAR_CLASS_FORM_CHANGED")
+
     initClass()
 end
 

@@ -1,10 +1,10 @@
 local textViewTemplate = mainForm:GetChildChecked("TextView", false)
 
 function createTextView(widgetName, posX, posY, initialValue)
-    local widget = createWidget(mainForm, widgetName, textViewTemplate, posX, posY)
-    widget:SetVal("value", initialValue)
+    local newTextWidget = createWidget(mainForm, widgetName, textViewTemplate, posX, posY)
+    newTextWidget:SetVal("value", initialValue)
 
-    return widget
+    return newTextWidget
 end
 
 function createWidget(parent, widgetName, template, posX, posY, alignX, alignY, width, height)
@@ -13,18 +13,28 @@ function createWidget(parent, widgetName, template, posX, posY, alignX, alignY, 
         sendMessage("Description for widget " .. tostring(widgetName) .. " not found.")
         return nil
     end
-    local widget = parent:CreateWidgetByDesc(desc)
-    if parent and widget
+    local newWidget = parent:CreateWidgetByDesc(desc)
+    if parent and newWidget
     then
-        parent:AddChild(widget)
+        parent:AddChild(newWidget)
     end
-    setName(widget, widgetName)
-    align(widget, alignX, alignY)
-    move(widget, posX, posY)
-    resize(widget, width, height)
-    show(widget)
+    setName(newWidget, widgetName)
+    align(newWidget, alignX, alignY)
+    move(newWidget, posX, posY)
+    resize(newWidget, width, height)
+    show(newWidget)
 
-    return widget
+    return newWidget
+end
+
+function destroyWidget(widget)
+    hide(widget)
+
+    if widget and widget.DestroyWidget then
+        widget:DestroyWidget()
+    end
+
+    widget = nil
 end
 
 function setTextColor(widget, color)

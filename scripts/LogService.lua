@@ -1,5 +1,9 @@
 local wtChat
 
+function consoleLog(message)
+    sendMessage(message)
+end
+
 function debugMessage(message)
     if debugMode then
         sendMessage(message)
