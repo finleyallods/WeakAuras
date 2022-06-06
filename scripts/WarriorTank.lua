@@ -112,8 +112,12 @@ function getWarriorTankRapidBlowTextColor()
     return nil
 end
 
-function getWarriorTankBerserkerTextColor()
-    return isOnCd("Berserker") and COLOR_NORMAL or nil
+function getBerserkerTextColor()
+    if isOnCd("Berserker") then
+        return nil
+    end
+
+    return COLOR_NORMAL
 end
 
 function evaluateWarriorTankPriority()

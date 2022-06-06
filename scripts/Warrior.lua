@@ -117,7 +117,11 @@ function getRapidBlowTextColor()
 end
 
 function getBerserkerTextColor()
-    return isOnCd("Berserker") and COLOR_NORMAL or nil
+    if isOnCd("Berserker") then
+        return nil
+    end
+
+    return COLOR_NORMAL
 end
 
 function evaluatePriority()
