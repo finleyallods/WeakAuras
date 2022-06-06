@@ -7,7 +7,7 @@ function checkAllBuffs(buffs, params, activate)
     end
 end
 
-function checkAllCDs(cds, params, setter)
+function checkAllCDs(cds, params)
     if params.effect < 1 or params.effect > 2 then
         return
     end
@@ -20,7 +20,7 @@ function checkAllCDs(cds, params, setter)
 
     for key, cdName in pairs(cds) do
         if params.index == key then
-            setter(cdName, timeStamp, params.duration)
+            setCD(cdName, timeStamp, params.duration)
         end
     end
 end
@@ -47,4 +47,8 @@ end
 
 function getCombatAdvantage()
     return tostring(avatar.GetWarriorCombatAdvantage())
+end
+
+function isMe(id)
+    return id == avatar.GetId()
 end

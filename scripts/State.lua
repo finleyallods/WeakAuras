@@ -1,5 +1,3 @@
-local myId
-
 local state
 
 function newState()
@@ -9,16 +7,12 @@ function newState()
     }
 end
 
-function isMe(id)
-    return id == myId
-end
-
 function setBuffId(buffName, buffId)
-    state.buffs[buffName.."BuffId"] = buffId
+    state.buffs[buffName] = buffId
 end
 
 function hasBuff(buffName)
-    return state.buffs[buffName.."BuffId"] ~= nil
+    return state.buffs[buffName] ~= nil
 end
 
 function setCD(cdName, timeStamp, duration)

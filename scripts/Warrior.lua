@@ -1,4 +1,4 @@
-function geAnimalPounceTextColor()
+function getAnimalPounceTextColor()
     if isOnCd("Animal Pounce") then
         return nil
     end
@@ -116,6 +116,10 @@ function getRapidBlowTextColor()
     return nil
 end
 
+function getBerserkerTextColor()
+    return isOnCd("Berserker") and COLOR_NORMAL or nil
+end
+
 function evaluatePriority()
     evaluate(getWtDeadlyLunge, getDeadlyLungeTextColor)
     evaluate(getWtJaggedSlice, getJaggedSliceTextColor)
@@ -123,7 +127,8 @@ function evaluatePriority()
     evaluate(getWtFracture, getFractureTextColor)
     evaluate(getWtRapidBlow, getRapidBlowTextColor)
     evaluate(getWtBloodyHarvest, getBloodyHarvestTextColor)
-    evaluate(getWtAnimalPounce, geAnimalPounceTextColor)
+    evaluate(getWtAnimalPounce, getAnimalPounceTextColor)
+    evaluate(getWtBerserker, getBerserkerTextColor)
     evaluateUtility()
 end
 
@@ -147,8 +152,8 @@ local CD_SETTER_MAP = {
 }
 
 function onWarriorActionPanelElementEffect(params)
-    checkAllCDs(CD_SETTER_MAP, params, setCD)
-    checkAllCDs(getWarriorUtilityCDMap(), params, setCD)
+    checkAllCDs(CD_SETTER_MAP, params)
+    checkAllCDs(getWarriorUtilityCDMap(), params)
     evaluatePriority()
 end
 
@@ -160,7 +165,6 @@ function onWarriorBuffAdded(params)
     if not isMe(params.objectId) then
         return
     end
-
     checkAllBuffs(getWarriorBuffs(), params, true)
     checkAllBuffs(getWarriorUtilityBuffs(), params, true)
 end

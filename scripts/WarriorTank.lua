@@ -113,7 +113,7 @@ function getWarriorTankRapidBlowTextColor()
 end
 
 function getWarriorTankBerserkerTextColor()
-    return isOnCd("Berserker")
+    return isOnCd("Berserker") and COLOR_NORMAL or nil
 end
 
 function evaluateWarriorTankPriority()
@@ -147,8 +147,8 @@ local CD_SETTER_MAP = {
 }
 
 function onWarriorTankActionPanelElementEffect(params)
-    checkAllCDs(CD_SETTER_MAP, params, setCD)
-    checkAllCDs(getWarriorUtilityCDMap(), params, setCD)
+    checkAllCDs(CD_SETTER_MAP, params)
+    checkAllCDs(getWarriorUtilityCDMap(), params)
     evaluateWarriorTankPriority()
 end
 
