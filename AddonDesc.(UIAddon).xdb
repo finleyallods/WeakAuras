@@ -12,6 +12,7 @@
         <Item href="scripts/Healer.lua"/>
         <Item href="scripts/WarriorUI.lua"/>
         <Item href="scripts/WarriorUtility.lua"/>
+        <Item href="scripts/WarriorPriority.lua"/>
         <Item href="scripts/WarriorTank.lua"/>
         <Item href="scripts/Warrior.lua"/>
         <Item href="scripts/WeakAuras.lua"/>

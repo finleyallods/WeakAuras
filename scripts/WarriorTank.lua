@@ -167,6 +167,7 @@ function onWarriorTankBuffAdded(params)
 
     checkAllBuffs(getWarriorTankBuffs(), params, true)
     checkAllBuffs(getWarriorUtilityBuffs(), params, true)
+    evaluateWarriorTankPriority()
 end
 
 function onWarriorTankBuffRemoved(params)
@@ -176,6 +177,7 @@ function onWarriorTankBuffRemoved(params)
 
     checkAllBuffs(getWarriorTankBuffs(), params, false)
     checkAllBuffs(getWarriorUtilityBuffs(), params, false)
+    evaluateWarriorTankPriority()
 end
 
 function onWarriorTankEventEquipmentItemEffect(params)

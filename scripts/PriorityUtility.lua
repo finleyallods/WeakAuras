@@ -2,7 +2,6 @@ function checkAllBuffs(buffs, params, activate)
     for key, buff in pairs(buffs) do
         if userMods.FromWString(params.buffName) == buff then
             setBuffId(buff, activate and params.buffId or nil)
-            evaluatePriority()
         end
     end
 end
