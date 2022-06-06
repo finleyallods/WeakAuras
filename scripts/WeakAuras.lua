@@ -133,7 +133,7 @@ function initClass()
         end
     else
         sendMessage("Aspect is missing.")
-        clearWarrior()
+        destroyAllWidgets()
     end
 end
 

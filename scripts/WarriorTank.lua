@@ -121,14 +121,14 @@ function getBerserkerTextColor()
 end
 
 function evaluateWarriorTankPriority()
-    evaluate(getWtDeadlyLunge, getWarriorTankDeadlyLungeTextColor)
-    evaluate(getWtTramp, getWarriorTankTrampTextColor)
-    evaluate(getWtDestructiveAttack, getWarriorTankDestructiveAttackTextColor)
-    evaluate(getWtFracture, getWarriorTankFractureTextColor)
-    evaluate(getWtRapidBlow, getWarriorTankRapidBlowTextColor)
-    evaluate(getWtBloodyHarvest, getWarriorTankBloodyHarvestTextColor)
-    evaluate(getWtViciousSpin, getWarriorTankViciousSpinTextColor)
-    evaluate(getWtBerserker, getWarriorTankBerserkerTextColor)
+    evaluate("Deadly Lunge", getWarriorTankDeadlyLungeTextColor)
+    evaluate("Tramp", getWarriorTankTrampTextColor)
+    evaluate("Destructive Attack", getWarriorTankDestructiveAttackTextColor)
+    evaluate("Fracture", getWarriorTankFractureTextColor)
+    evaluate("RapidBlow", getWarriorTankRapidBlowTextColor)
+    evaluate("Bloody Harvest", getWarriorTankBloodyHarvestTextColor)
+    evaluate("Vicious Spin", getWarriorTankViciousSpinTextColor)
+    evaluate("Berserker", getWarriorTankBerserkerTextColor)
 end
 
 function onWarriorTankUnitManaChanged(params)
@@ -138,7 +138,7 @@ function onWarriorTankUnitManaChanged(params)
 end
 
 function onWarriorTankCombatAdvantageChanged()
-    getWtCombatAdvantage():SetVal("value", getCombatAdvantage())
+    getWidgetByName("CombatAdvantage"):SetVal("value", getCombatAdvantage())
     evaluateWarriorTankPriority()
 end
 
@@ -194,22 +194,22 @@ function onWarriorTankEventEquipmentItemEffect(params)
     end
 
     local activate = params.effect == EFFECT_TYPE_COOLDOWN_FINISHED
-    getWtTrinket():Show(activate)
+    getWidgetByName("Trinket"):Show(activate)
 end
 
 function initWarriorTank()
-    setWtCombatAdvantage(createTextView("CombatAdvantage", 40, 500, getCombatAdvantage()))
-    setWtDestructiveAttack(createTextView("DestructiveAttack", 40, 425, "1"))
-    setWtFracture(createTextView("Fracture", 90, 450, "2"))
-    setWtTramp(createTextView("Tramp", 110, 500, "3"))
-    setWtViciousSpin(createTextView("ViciousSpin", -30, 500, "#"))
-    setWtRapidBlow(createTextView("RapidBlow", -10, 550, "6"))
-    setWtDeadlyLunge(createTextView("DeadlyLunge", 90, 550, "7"))
-    setWtBerserker(createTextView("Berserker", -10, 650, "s6"))
-    setWtBloodyHarvest(createTextView("BloodyHarvest", 90, 650, "s7"))
-    setWtTrinket(createTextView("Trinket", 40, 625, "*"))
+    addWidgetToList(createTextView("Combat Advantage", 40, 500, getCombatAdvantage()))
+    addWidgetToList(createTextView("Destructive Attack", 40, 425, "1"))
+    addWidgetToList(createTextView("Fracture", 90, 450, "2"))
+    addWidgetToList(createTextView("Tramp", 110, 500, "3"))
+    addWidgetToList(createTextView("Vicious Spin", -30, 500, "#"))
+    addWidgetToList(createTextView("Rapid Blow", -10, 550, "6"))
+    addWidgetToList(createTextView("Deadly Lunge", 90, 550, "7"))
+    addWidgetToList(createTextView("Berserker", -10, 650, "s6"))
+    addWidgetToList(createTextView("Bloody Harvest", 90, 650, "s7"))
+    addWidgetToList(createTextView("Trinket", 40, 625, "*"))
 
-    setTextColor(getWtTrinket(), COLOR_TRINKET)
+    setTextColor(getWidgetByName("Trinket"), COLOR_TRINKET)
 
     evaluateWarriorTankPriority()
 end

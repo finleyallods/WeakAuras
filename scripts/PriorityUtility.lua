@@ -24,8 +24,8 @@ function checkAllCDs(cds, params)
     end
 end
 
-function evaluate(widgetGetter, textColorGetter)
-    local widget = widgetGetter and widgetGetter()
+function evaluate(widgetName, textColorGetter)
+    local widget = getWidgetByName(widgetName)
 
     if widget == nil then
         return
