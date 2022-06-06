@@ -8,7 +8,9 @@
         <Item href="scripts/WidgetService.lua"/>
         <Item href="scripts/TimerService.lua"/>
         <Item href="scripts/Healer.lua"/>
+        <Item href="scripts/WarriorUI.lua"/>
         <Item href="scripts/WarriorState.lua"/>
+        <Item href="scripts/WarriorUtility.lua"/>
         <Item href="scripts/WarriorTank.lua"/>
         <Item href="scripts/Warrior.lua"/>
         <Item href="scripts/WeakAuras.lua"/>

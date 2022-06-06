@@ -1,7 +1,11 @@
 local wtChat
 
 function consoleLog(message)
-    sendMessage(message)
+    if common.IsWString(message) then
+        sendMessage(userMods.FromWString(message))
+    end
+
+    sendMessage(tostring(message))
 end
 
 function debugMessage(message)

@@ -145,12 +145,14 @@ end
 function onWarriorUnitManaChanged(params)
     if isMe(params.unitId) then
         evaluatePriority()
+        evaluateUtility()
     end
 end
 
 function onWarriorCombatAdvantageChanged()
     getWtCombatAdvantage():SetVal("value", getCombatAdvantage())
     evaluatePriority()
+    evaluateUtility()
 end
 
 local CD_SETTER_MAP = {
@@ -181,6 +183,7 @@ function onWarriorActionPanelElementEffect(params)
         getWtBerserker():Show(params.effect == 2)
     end
 
+    onWarriorUtilityActionPanelElementEffect(params)
     evaluatePriority()
 end
 
@@ -195,6 +198,8 @@ function onWarriorBuffAdded(params)
     elseif userMods.FromWString(params.buffName) == "Flaming Blade" then
         setFlamingBladeBuffId(params.buffId)
         evaluatePriority()
+    else
+        onWarriorUtilityBuffAdded(params)
     end
 end
 
@@ -209,6 +214,8 @@ function onWarriorBuffRemoved(params)
     elseif userMods.FromWString(params.buffName) == "Flaming Blade" then
         setFlamingBladeBuffId(nil)
         evaluatePriority()
+    else
+        onWarriorUtilityBuffRemoved(params)
     end
 end
 
@@ -241,6 +248,7 @@ function initWarrior()
     setWtBerserker(createTextView("Berserker", -10, 650, "s6"))
     setWtBloodyHarvest(createTextView("BloodyHarvest", 90, 650, "s7"))
     setWtTrinket(createTextView("Trinket", 40, 625, "*"))
+    initWarriorUtility()
 
     setTextColor(getWtTrinket(), COLOR_TRINKET)
 
