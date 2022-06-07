@@ -98,8 +98,8 @@ function initWarriorUtility(initTank)
     getWidgetByName("Aimed Shot"):SetTextScale(0.65)
 
     if isTank then
-        addWidgetToList(createTextView("Break", -300, 675, "E"))
-        addWidgetToList(createTextView("Deliverance", -285, 700, "sE"))
+        addWidgetToList(createTextView("Break", -140, 575, "E"))
+        addWidgetToList(createTextView("Deliverance", -125, 600, "sE"))
         addWidgetToList(createTextView("Harpoon", -225, 575, "G"))
 
         getWidgetByName("Break"):SetTextScale(0.75)
