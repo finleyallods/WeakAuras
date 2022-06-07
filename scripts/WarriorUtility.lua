@@ -25,7 +25,11 @@ function getTurtleTextColor()
 end
 
 function getChargeTextColor()
-    return getEnergy() < 23 or isOnCd("Charge") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+    if getEnergy() < 23 or isOnCd("Charge") then
+        return COLOR_IMPOSSIBLE
+    end
+
+    return COLOR_NORMAL
 end
 
 function getMadLeapTextColor()
@@ -33,11 +37,19 @@ function getMadLeapTextColor()
 end
 
 function getMightyLeapTextColor()
-    return getEnergy() < 23 or isOnCd("Mighty Leap") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+    if getEnergy() < 23 or isOnCd("Mighty Leap") then
+        return COLOR_IMPOSSIBLE
+    end
+
+    return COLOR_NORMAL
 end
 
 function getAimedShotTextColor()
-    return getEnergy() < 25 or isOnCd("Aimed Shot") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+    if getEnergy() < 25 or isOnCd("Aimed Shot") then
+        return COLOR_IMPOSSIBLE
+    end
+
+    return COLOR_NORMAL
 end
 
 function getBreakTextColor()
@@ -45,7 +57,11 @@ function getBreakTextColor()
 end
 
 function getDeliveranceTextColor()
-    return getEnergy() < 21 or isOnCd("Deliverance") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+    if getEnergy() < 21 or isOnCd("Deliverance") then
+        return COLOR_IMPOSSIBLE
+    end
+
+    return COLOR_NORMAL
 end
 
 function getHarpoonTextColor()

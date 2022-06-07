@@ -1,4 +1,4 @@
-local ENERGY_DESTRUCTIVE_ATTACK = 37
+local ENERGY_DESTRUCTIVE_ATTACK = 40
 local ENERGY_FRACTURE = 25
 
 function getAnimalPounceTextColor()
