@@ -60,7 +60,7 @@ function onWarriorTankActionPanelElementEffect(params)
 end
 
 function getWarriorTankBuffs()
-    return {"Bloody Harvest", "Flaming Blade"}
+    return { "Bloody Harvest", "Flaming Blade" }
 end
 
 function onWarriorTankBuffAdded(params)
@@ -100,6 +100,19 @@ function onWarriorTankEventEquipmentItemEffect(params)
     getWidgetByName("Trinket"):Show(activate)
 end
 
+function onEventUnitHealthChanged(params)
+    if not isMe(params.target) then
+        return
+    end
+    local hp = object.GetHealthInfo(params.target).valuePercents
+
+    getWidgetByName("Health"):SetVal("value", tostring(hp))
+end
+
+function onEventAvatarWarriorDamagePoolChanged(params)
+    getWidgetByName("Damage Pool"):SetVal("value", tostring(math.round(params.value / 1000)))
+end
+
 function initWarriorTank()
     addWidgetToList(createTextView("Combat Advantage", 40, 500, getCombatAdvantage()))
     addWidgetToList(createTextView("Destructive Attack", 40, 425, "1"))
@@ -111,6 +124,14 @@ function initWarriorTank()
     addWidgetToList(createTextView("Berserker", -10, 650, "s6"))
     addWidgetToList(createTextView("Bloody Harvest", 90, 650, "s7"))
     addWidgetToList(createTextView("Trinket", 40, 625, "*"))
+    addWidgetToList(createTextView("Health", -200, 700, "100"))
+    addWidgetToList(createTextView("Damage Pool", -110, 545, "0"))
+    getWidgetByName("Damage Pool"):SetTextScale(0.75)
+
+    common.RegisterEventHandler(onEventAvatarWarriorDamagePoolChanged, "EVENT_AVATAR_WARRIOR_DAMAGE_POOL_CHANGED")
+    common.RegisterEventHandler(onEventUnitHealthChanged, "EVENT_UNIT_DAMAGE_RECEIVED")
+    common.RegisterEventHandler(onEventUnitHealthChanged, "EVENT_HEALING_RECEIVED")
+
     initWarriorUtility(true)
 
     setTextColor(getWidgetByName("Trinket"), COLOR_TRINKET)
