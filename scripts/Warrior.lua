@@ -5,7 +5,7 @@ function onWarriorUnitManaChanged(params)
 end
 
 function onWarriorCombatAdvantageChanged()
-    getWidgetByName("CombatAdvantage"):SetVal("value", getCombatAdvantage())
+    getWidgetByName("Combat Advantage"):SetVal("value", getCombatAdvantage())
     evaluateWarriorPriority()
 end
 
