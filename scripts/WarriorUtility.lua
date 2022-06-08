@@ -1,11 +1,22 @@
 local isTank
 
+local TURTLE = "Turtle"
+local ADRENALINE_SURGE = "Adrenaline Surge"
+local CHARGE = "Charge"
+local MAD_LEAP = "Mad Leap"
+local MIGHTY_LEAP = "Mighty Leap"
+local AIMED_SHOT = "Aimed Shot"
+local MARTYRS_GUIDANCE = "Martyr's Guidance"
+local BREAK = "Break"
+local DELIVERANCE = "Deliverance"
+local HARPOON = "Harpoon"
+
 function getAdrenalineSurgeTextColor()
-    if hasBuff("Adrenaline Surge") or hasBuff("Turtle") then
+    if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) then
         return nil
     end
 
-    if getEnergy() < 25 or isOnCd("Adrenaline Surge") then
+    if getEnergy() < 25 or isOnCd(ADRENALINE_SURGE) then
         return COLOR_IMPOSSIBLE
     end
 
@@ -13,11 +24,11 @@ function getAdrenalineSurgeTextColor()
 end
 
 function getTurtleTextColor()
-    if hasBuff("Adrenaline Surge") or hasBuff("Turtle") then
+    if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) then
         return nil
     end
 
-    if getEnergy() < 25 or isOnCd("Turtle") then
+    if getEnergy() < 25 or isOnCd(TURTLE) then
         return COLOR_IMPOSSIBLE
     end
 
@@ -25,7 +36,7 @@ function getTurtleTextColor()
 end
 
 function getChargeTextColor()
-    if getEnergy() < 23 or isOnCd("Charge") then
+    if getEnergy() < 23 or isOnCd(CHARGE) then
         return COLOR_IMPOSSIBLE
     end
 
@@ -33,11 +44,11 @@ function getChargeTextColor()
 end
 
 function getMadLeapTextColor()
-    return isOnCd("Mad Leap") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+    return isOnCd(MAD_LEAP) and COLOR_IMPOSSIBLE or COLOR_NORMAL
 end
 
 function getMightyLeapTextColor()
-    if getEnergy() < 23 or isOnCd("Mighty Leap") then
+    if getEnergy() < 23 or isOnCd(MIGHTY_LEAP) then
         return COLOR_IMPOSSIBLE
     end
 
@@ -45,7 +56,7 @@ function getMightyLeapTextColor()
 end
 
 function getMartyrsGuidanceTextColor()
-    if isOnCd("Martyr's Guidance") then
+    if isOnCd(MARTYRS_GUIDANCE) then
         return nil
     end
 
@@ -57,7 +68,7 @@ function getMartyrsGuidanceTextColor()
 end
 
 function getAimedShotTextColor()
-    if getEnergy() < 25 or isOnCd("Aimed Shot") then
+    if getEnergy() < 25 or isOnCd(AIMED_SHOT) then
         return COLOR_IMPOSSIBLE
     end
 
@@ -65,11 +76,11 @@ function getAimedShotTextColor()
 end
 
 function getBreakTextColor()
-    return isOnCd("Break") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+    return isOnCd(BREAK) and COLOR_IMPOSSIBLE or COLOR_NORMAL
 end
 
 function getDeliveranceTextColor()
-    if getEnergy() < 21 or isOnCd("Deliverance") then
+    if getEnergy() < 21 or isOnCd(DELIVERANCE) then
         return COLOR_IMPOSSIBLE
     end
 
@@ -77,70 +88,70 @@ function getDeliveranceTextColor()
 end
 
 function getHarpoonTextColor()
-    return isOnCd("Harpoon") and COLOR_IMPOSSIBLE or COLOR_NORMAL
+    return isOnCd(HARPOON) and COLOR_IMPOSSIBLE or COLOR_NORMAL
 end
 
 function evaluateUtility()
-    evaluate("Turtle", getTurtleTextColor)
-    evaluate("AdrenalineSurge", getAdrenalineSurgeTextColor)
-    evaluate("Charge", getChargeTextColor)
-    evaluate("Mad Leap", getMadLeapTextColor)
-    evaluate("Mighty Leap", getMightyLeapTextColor)
-    evaluate("Aimed Shot", getAimedShotTextColor)
-    evaluate("Martyr's Guidance", getMartyrsGuidanceTextColor)
+    evaluate(TURTLE, getTurtleTextColor)
+    evaluate(ADRENALINE_SURGE, getAdrenalineSurgeTextColor)
+    evaluate(CHARGE, getChargeTextColor)
+    evaluate(MAD_LEAP, getMadLeapTextColor)
+    evaluate(MIGHTY_LEAP, getMightyLeapTextColor)
+    evaluate(AIMED_SHOT, getAimedShotTextColor)
+    evaluate(MARTYRS_GUIDANCE, getMartyrsGuidanceTextColor)
 
     if isTank then
-        evaluate("Break", getBreakTextColor)
-        evaluate("Deliverance", getDeliveranceTextColor)
-        evaluate("Harpoon", getHarpoonTextColor)
+        evaluate(BREAK, getBreakTextColor)
+        evaluate(DELIVERANCE, getDeliveranceTextColor)
+        evaluate(HARPOON, getHarpoonTextColor)
     end
 end
 
 function initWarriorUtility(initTank)
     isTank = initTank
-    addWidgetToList(createTextView("Turtle", -175, 485, "^"))
-    addWidgetToList(createTextView("AdrenalineSurge", -175, 515, "v"))
-    addWidgetToList(createTextView("Charge", -300, 550, "Q"))
-    addWidgetToList(createTextView("Mad Leap", -285, 575, "sQ"))
-    addWidgetToList(createTextView("Mighty Leap", -250, 550, "R"))
-    addWidgetToList(createTextView("Aimed Shot", -285, 525, "s4"))
-    addWidgetToList(createTextView("Martyr's Guidance", 50, 625, "s2"))
+    addWidgetToList(createTextView(TURTLE, -175, 485, "^"))
+    addWidgetToList(createTextView(ADRENALINE_SURGE, -175, 515, "v"))
+    addWidgetToList(createTextView(CHARGE, -300, 550, "Q"))
+    addWidgetToList(createTextView(MAD_LEAP, -285, 575, "sQ"))
+    addWidgetToList(createTextView(MIGHTY_LEAP, -250, 550, "R"))
+    addWidgetToList(createTextView(AIMED_SHOT, -285, 525, "s4"))
+    addWidgetToList(createTextView(MARTYRS_GUIDANCE, 50, 625, "s2"))
 
-    getWidgetByName("Charge"):SetTextScale(0.75)
-    getWidgetByName("Mad Leap"):SetTextScale(0.65)
-    getWidgetByName("Mighty Leap"):SetTextScale(0.75)
-    getWidgetByName("Aimed Shot"):SetTextScale(0.65)
-    getWidgetByName("Martyr's Guidance"):SetTextScale(0.65)
+    getWidgetByName(CHARGE):SetTextScale(0.75)
+    getWidgetByName(MAD_LEAP):SetTextScale(0.65)
+    getWidgetByName(MIGHTY_LEAP):SetTextScale(0.75)
+    getWidgetByName(AIMED_SHOT):SetTextScale(0.65)
+    getWidgetByName(MARTYRS_GUIDANCE):SetTextScale(0.65)
 
     if isTank then
-        addWidgetToList(createTextView("Break", -140, 575, "E"))
-        addWidgetToList(createTextView("Deliverance", -125, 600, "sE"))
-        addWidgetToList(createTextView("Harpoon", -225, 575, "G"))
+        addWidgetToList(createTextView(BREAK, -140, 575, "E"))
+        addWidgetToList(createTextView(DELIVERANCE, -125, 600, "sE"))
+        addWidgetToList(createTextView(HARPOON, -225, 575, "G"))
 
-        getWidgetByName("Break"):SetTextScale(0.75)
-        getWidgetByName("Deliverance"):SetTextScale(0.65)
-        getWidgetByName("Harpoon"):SetTextScale(0.75)
+        getWidgetByName(BREAK):SetTextScale(0.75)
+        getWidgetByName(DELIVERANCE):SetTextScale(0.65)
+        getWidgetByName(HARPOON):SetTextScale(0.75)
     end
 end
 
 function getWarriorUtilityBuffs()
-    return { "Turtle", "Adrenaline Surge" }
+    return { TURTLE, ADRENALINE_SURGE }
 end
 
 function getWarriorUtilityCDMap()
     local cdMap = {
-        [37] = "Turtle",
-        [38] = "Adrenaline Surge",
-        [7] = "Charge",
-        [9] = "Mighty Leap",
-        [27] = "Aimed Shot",
-        [25] = "Martyr's Guidance",
-        [31] = "Mad Leap",
+        [37] = TURTLE,
+        [38] = ADRENALINE_SURGE,
+        [7] = CHARGE,
+        [9] = MIGHTY_LEAP,
+        [27] = AIMED_SHOT,
+        [25] = MARTYRS_GUIDANCE,
+        [31] = MAD_LEAP,
     }
     if isTank then
-        cdMap[8] = "Break"
-        cdMap[32]= "Deliverance"
-        cdMap[10] = "Harpoon"
+        cdMap[8] = BREAK
+        cdMap[32]= DELIVERANCE
+        cdMap[10] = HARPOON
     end
 
     return cdMap
