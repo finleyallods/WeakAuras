@@ -40,6 +40,23 @@ function evaluate(widgetName, textColorGetter)
     end
 end
 
+function displayPriority(priority)
+    for widgetName, textColor in pairs(priority) do
+        local widget = getWidgetByName(widgetName)
+
+        if widget == nil then
+            return
+        end
+
+        if textColor ~= nil and textColor ~= COLOR_NONE then
+            show(widget)
+            setTextColor(widget, textColor)
+        else
+            hide(widget)
+        end
+    end
+end
+
 function getEnergy()
     return unit.GetMana(avatar.GetId()).mana
 end

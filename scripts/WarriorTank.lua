@@ -1,3 +1,98 @@
+local ENERGY_DESTRUCTIVE_ATTACK = 40
+local ENERGY_FRACTURE = 25
+
+function getDestructiveAttackTextColorAsTank()
+    if hasBuff("Flaming Blade") then
+        return nil
+    end
+
+    if avatar.GetWarriorCombatAdvantage() > 75 then
+        return getEnergy() >= ENERGY_DESTRUCTIVE_ATTACK and COLOR_BAD or COLOR_IMPOSSIBLE
+    end
+
+    if not hasBuff("Bloody Harvest") then
+        return getEnergy() >= ENERGY_DESTRUCTIVE_ATTACK and COLOR_NORMAL or COLOR_IMPOSSIBLE
+    end
+
+    return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or COLOR_BAD
+end
+
+function getFractureTextColorAsTank()
+    if not hasBuff("Flaming Blade") then
+        return nil
+    end
+
+    if avatar.GetWarriorCombatAdvantage() > 85 then
+        return getEnergy() >= ENERGY_FRACTURE and COLOR_BAD or COLOR_IMPOSSIBLE
+    end
+
+    if not hasBuff("Bloody Harvest") then
+        return getEnergy() >= ENERGY_FRACTURE and COLOR_NORMAL or COLOR_IMPOSSIBLE
+    end
+
+    return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or COLOR_BAD
+end
+
+function getRapidBlowTextColorForBurstAsTank()
+    if not isOnCd("Deadly Lunge") and not hasBuff("Titan's Rage") then
+        return nil
+    end
+
+    if avatar.GetWarriorCombatAdvantage() < 25 then
+        return COLOR_IMPOSSIBLE
+    end
+
+    if hasBuff("Flaming Blade") and getEnergy() < ENERGY_FRACTURE then
+        return COLOR_NORMAL
+    end
+
+    if getEnergy() < ENERGY_DESTRUCTIVE_ATTACK then
+        return COLOR_NORMAL
+    end
+
+    return avatar.GetWarriorCombatAdvantage() >= 45 and COLOR_NORMAL or COLOR_BAD
+end
+
+function getRapidBlowTextColorAsTank()
+    if not isOnCd("Deadly Lunge") and not isOnCd("Bloody Harvest") and not hasBuff("Titan's Rage") then
+        return nil
+    end
+
+    if hasBuff("Bloody Harvest") then
+        return getRapidBlowTextColorForBurstAsTank()
+    end
+
+    if avatar.GetWarriorCombatAdvantage() < 25 then
+        return nil
+    end
+
+    if hasBuff("Flaming Blade") then
+        return getEnergy() < ENERGY_FRACTURE and COLOR_NORMAL or nil
+    end
+
+    return getEnergy() < ENERGY_DESTRUCTIVE_ATTACK and COLOR_NORMAL or nil
+end
+
+function getDeadlyLungeTextColorAsTank()
+    if isOnCd("Deadly Lunge") or hasBuff("Titan's Rage") then
+        return nil
+    end
+
+    return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_NORMAL or COLOR_IMPOSSIBLE
+end
+
+function getBloodyHarvestTextColorAsTank()
+    if isOnCd("Bloody Harvest") then
+        return nil
+    end
+
+    if avatar.GetWarriorCombatAdvantage() < 30 then
+        return COLOR_IMPOSSIBLE
+    end
+
+    return COLOR_NORMAL
+end
+
 function getViciousSpinTextColor()
     if isOnCd("Vicious Spin") then
         return nil
@@ -23,11 +118,11 @@ function getTrampTextColor()
 end
 
 function evaluateWarriorTankPriority()
-    evaluate("Deadly Lunge", getDeadlyLungeTextColor)
-    evaluate("Destructive Attack", getDestructiveAttackTextColor)
-    evaluate("Fracture", getFractureTextColor)
-    evaluate("Rapid Blow", getRapidBlowTextColor)
-    evaluate("Bloody Harvest", getBloodyHarvestTextColor)
+    evaluate("Deadly Lunge", getDeadlyLungeTextColorAsTank)
+    evaluate("Destructive Attack", getDestructiveAttackTextColorAsTank)
+    evaluate("Fracture", getFractureTextColorAsTank)
+    evaluate("Rapid Blow", getRapidBlowTextColorAsTank)
+    evaluate("Bloody Harvest", getBloodyHarvestTextColorAsTank)
     evaluate("Berserker", getBerserkerTextColor)
     evaluate("Tramp", getTrampTextColor)
     evaluate("Vicious Spin", getViciousSpinTextColor)
@@ -60,7 +155,7 @@ function onWarriorTankActionPanelElementEffect(params)
 end
 
 function getWarriorTankBuffs()
-    return { "Bloody Harvest", "Flaming Blade" }
+    return { "Bloody Harvest", "Flaming Blade", "Titan's Rage" }
 end
 
 function onWarriorTankBuffAdded(params)

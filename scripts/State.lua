@@ -28,3 +28,7 @@ end
 function isOnCd(cdName)
     return state.cds[cdName] ~= nil
 end
+
+function can(cdName)
+    return not isOnCd(cdName)
+end

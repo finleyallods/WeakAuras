@@ -1,154 +1,167 @@
-local ENERGY_DESTRUCTIVE_ATTACK = 40
+local ENERGY_DESTRUCTIVE_ATTACK = 37
 local ENERGY_FRACTURE = 25
 
+local FLAMING_BLADE = "Flaming Blade"
+local DESTRUCTIVE_ATTACK = "Destructive Attack"
+local FRACTURE = "Fracture"
+local JAGGED_SLICE = "Jagged Slice"
+local ANIMAL_POUNCE = "Animal Pounce"
+local RAPID_BLOW = "Rapid Blow"
+local DEADLY_LUNGE = "Deadly Lunge"
+local BERSERKER = "Berserker"
+local BLOODY_HARVEST = "Bloody Harvest"
+
+function getJaggedSliceTextColor()
+    if isOnCd(JAGGED_SLICE) then
+        return COLOR_NONE
+    end
+
+    return getEnergy() < 24 and COLOR_IMPOSSIBLE or COLOR_DOT
+end
+
 function getAnimalPounceTextColor()
-    if isOnCd("Animal Pounce") then
-        return nil
+    if isOnCd(ANIMAL_POUNCE) then
+        return COLOR_NONE
     end
 
-    if avatar.GetWarriorCombatAdvantage() > 70 then
-        return nil
+    if hasBuff(BLOODY_HARVEST) then
+        return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or COLOR_BAD
     end
 
-    if hasBuff("Bloody Harvest") then
-        return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or nil
+    if shouldBurst or avatar.GetWarriorCombatAdvantage() > 70 and getEnergy() > 70 then
+        return COLOR_BAD
+    end
+
+    return COLOR_GOOD
+end
+
+function getRapidBlowTextColor()
+    if shouldBurst() or shouldBuildCombatAdvantage() then
+        return COLOR_NONE
+    end
+
+    if hasBuff(BLOODY_HARVEST) and can(DEADLY_LUNGE) then
+        return COLOR_NONE
+    end
+
+    if can(BLOODY_HARVEST) then
+        return COLOR_SECOND
+    end
+
+    return avatar.GetWarriorCombatAdvantage() >= 20 and COLOR_NORMAL or COLOR_IMPOSSIBLE
+end
+
+function getDeadlyLungeTextColor()
+    if isOnCd(DEADLY_LUNGE) then
+        return COLOR_NONE
+    end
+
+    if shouldBurst() then
+        return COLOR_SECOND
+    end
+
+    if hasBuff(BLOODY_HARVEST) then
+        return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_GOOD or COLOR_IMPOSSIBLE
+    end
+
+    return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_BAD or COLOR_NONE
+end
+
+function getBerserkerTextColor()
+    if isOnCd(BERSERKER) then
+        return COLOR_NONE
+    end
+
+    if hasBuff(BLOODY_HARVEST) or shouldBurst() then
+        return COLOR_GOOD
     end
 
     return COLOR_NORMAL
 end
 
-function getJaggedSliceTextColor()
-    if isOnCd("Jagged Slice") then
-        return nil
-    end
-
-    if getEnergy() < 24 then
-        return COLOR_IMPOSSIBLE
-    end
-
-    return COLOR_DOT
-end
-
-function getDestructiveAttackTextColor()
-    if hasBuff("Flaming Blade") then
-        return nil
-    end
-
-    if avatar.GetWarriorCombatAdvantage() > 75 then
-        return getEnergy() >= ENERGY_DESTRUCTIVE_ATTACK and COLOR_BAD or COLOR_IMPOSSIBLE
-    end
-
-    if not hasBuff("Bloody Harvest") then
-        return getEnergy() >= ENERGY_DESTRUCTIVE_ATTACK and COLOR_NORMAL or COLOR_IMPOSSIBLE
-    end
-
-    return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or COLOR_BAD
-end
-
-function getFractureTextColor()
-    if not hasBuff("Flaming Blade") then
-        return nil
-    end
-
-    if avatar.GetWarriorCombatAdvantage() > 85 then
-        return getEnergy() >= ENERGY_FRACTURE and COLOR_BAD or COLOR_IMPOSSIBLE
-    end
-
-    if not hasBuff("Bloody Harvest") then
-        return getEnergy() >= ENERGY_FRACTURE and COLOR_NORMAL or COLOR_IMPOSSIBLE
-    end
-
-    return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or COLOR_BAD
-end
-
-function getRapidBlowTextColorForBurst()
-    if not isOnCd("Deadly Lunge") then
-        return nil
-    end
-
-    if avatar.GetWarriorCombatAdvantage() < 25 then
-        return COLOR_IMPOSSIBLE
-    end
-
-    if hasBuff("Flaming Blade") and getEnergy() < ENERGY_FRACTURE then
-        return COLOR_NORMAL
-    end
-
-    if getEnergy() < ENERGY_DESTRUCTIVE_ATTACK then
-        return COLOR_NORMAL
-    end
-
-    return avatar.GetWarriorCombatAdvantage() >= 45 and COLOR_NORMAL or COLOR_BAD
-end
-
-function getRapidBlowTextColor()
-    if not isOnCd("Deadly Lunge") and not isOnCd("Bloody Harvest") then
-        return nil
-    end
-
-    if hasBuff("Bloody Harvest") then
-       return getRapidBlowTextColorForBurst()
-    end
-
-    if avatar.GetWarriorCombatAdvantage() < 25 then
-        return nil
-    end
-
-    if hasBuff("Flaming Blade") then
-        return getEnergy() < ENERGY_FRACTURE and COLOR_NORMAL or nil
-    end
-
-    return getEnergy() < ENERGY_DESTRUCTIVE_ATTACK and COLOR_NORMAL or nil
-end
-
-function getDeadlyLungeTextColor()
-    if isOnCd("Deadly Lunge") then
-        return nil
-    end
-
-    if hasBuff("Bloody Harvest") then
-        return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_NORMAL or COLOR_IMPOSSIBLE
-    end
-
-    if avatar.GetWarriorCombatAdvantage() >= 25 then
-        return COLOR_BAD
-    end
-
-    return nil
-end
-
 function getBloodyHarvestTextColor()
-    if isOnCd("Bloody Harvest") then
-        return nil
+    if isOnCd(BLOODY_HARVEST) then
+        return COLOR_NONE
     end
 
     if avatar.GetWarriorCombatAdvantage() < 30 then
         return COLOR_IMPOSSIBLE
     end
 
-    if avatar.GetWarriorCombatAdvantage() < 45 or isOnCd("Deadly Lunge") then
-        return COLOR_BAD
+    if shouldBurst() then
+        return COLOR_GOOD
     end
 
-    return COLOR_NORMAL
+    if can(BLOODY_HARVEST) and not shouldBuildCombatAdvantage() then
+        return COLOR_NORMAL
+    end
+
+    return COLOR_BAD
 end
 
-function getBerserkerTextColor()
-    if isOnCd("Berserker") then
-        return nil
+function shouldBurst()
+    return can(BLOODY_HARVEST) and can(DEADLY_LUNGE) and avatar.GetWarriorCombatAdvantage() >= 55
+end
+
+function getCombatAdvantageBuilder()
+    if hasBuff(FLAMING_BLADE) and getEnergy() >= ENERGY_FRACTURE then
+        return FRACTURE
     end
 
-    return COLOR_NORMAL
+    if not hasBuff(FLAMING_BLADE) and getEnergy() >= ENERGY_DESTRUCTIVE_ATTACK then
+        return DESTRUCTIVE_ATTACK
+    end
+
+    return nil
+end
+
+function shouldBuildCombatAdvantage()
+    if not getCombatAdvantageBuilder() or shouldBurst() then
+        return false
+    end
+
+    if hasBuff(BLOODY_HARVEST) and can(DEADLY_LUNGE) then
+        return false
+    end
+
+    if avatar.GetWarriorCombatAdvantage() < 45 then
+        return true
+    end
+
+    if hasBuff(BLOODY_HARVEST) then
+        return false
+    end
+
+    if not hasBuff(FLAMING_BLADE) then
+        return avatar.GetWarriorCombatAdvantage() <= 75
+    end
+
+    return avatar.GetWarriorCombatAdvantage() <= 85
+end
+
+function getWarriorPriority()
+    local priority = {
+        [DESTRUCTIVE_ATTACK] = COLOR_NONE,
+        [FRACTURE] = COLOR_NONE,
+        [RAPID_BLOW] = COLOR_NONE,
+        [DEADLY_LUNGE] = COLOR_NONE,
+    }
+
+    if shouldBuildCombatAdvantage() then
+        priority[getCombatAdvantageBuilder()] = COLOR_NORMAL
+    end
+
+    priority[JAGGED_SLICE] = getJaggedSliceTextColor()
+    priority[ANIMAL_POUNCE] = getAnimalPounceTextColor()
+    priority[RAPID_BLOW] = getRapidBlowTextColor()
+    priority[DEADLY_LUNGE] = getDeadlyLungeTextColor()
+    priority[BLOODY_HARVEST] = getBloodyHarvestTextColor()
+    priority[BERSERKER] = getBerserkerTextColor()
+
+    return priority
 end
 
 function evaluateWarriorPriority()
-    evaluate("Deadly Lunge", getDeadlyLungeTextColor)
-    evaluate("Jagged Slice", getJaggedSliceTextColor)
-    evaluate("Destructive Attack", getDestructiveAttackTextColor)
-    evaluate("Fracture", getFractureTextColor)
-    evaluate("Rapid Blow", getRapidBlowTextColor)
-    evaluate("Bloody Harvest", getBloodyHarvestTextColor)
-    evaluate("Animal Pounce", getAnimalPounceTextColor)
-    evaluate("Berserker", getBerserkerTextColor)
+    displayPriority(getWarriorPriority())
     evaluateUtility()
 end
