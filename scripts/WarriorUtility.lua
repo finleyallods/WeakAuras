@@ -134,7 +134,7 @@ function getWarriorUtilityCDMap()
         [7] = "Charge",
         [9] = "Mighty Leap",
         [27] = "Aimed Shot",
-        [29] = "Martyr's Guidance",
+        [25] = "Martyr's Guidance",
         [31] = "Mad Leap",
     }
     if isTank then
