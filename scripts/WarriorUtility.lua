@@ -44,6 +44,18 @@ function getMightyLeapTextColor()
     return COLOR_NORMAL
 end
 
+function getMartyrsGuidanceTextColor()
+    if isOnCd("Martyr's Guidance") then
+        return nil
+    end
+
+    if  avatar.GetWarriorCombatAdvantage() <= 70 and getEnergy() <= 70 then
+        return COLOR_GOOD
+    end
+
+    return COLOR_BAD
+end
+
 function getAimedShotTextColor()
     if getEnergy() < 25 or isOnCd("Aimed Shot") then
         return COLOR_IMPOSSIBLE
@@ -75,6 +87,7 @@ function evaluateUtility()
     evaluate("Mad Leap", getMadLeapTextColor)
     evaluate("Mighty Leap", getMightyLeapTextColor)
     evaluate("Aimed Shot", getAimedShotTextColor)
+    evaluate("Martyr's Guidance", getMartyrsGuidanceTextColor)
 
     if isTank then
         evaluate("Break", getBreakTextColor)
@@ -91,11 +104,13 @@ function initWarriorUtility(initTank)
     addWidgetToList(createTextView("Mad Leap", -285, 575, "sQ"))
     addWidgetToList(createTextView("Mighty Leap", -250, 550, "R"))
     addWidgetToList(createTextView("Aimed Shot", -285, 525, "s4"))
+    addWidgetToList(createTextView("Martyr's Guidance", 50, 625, "s2"))
 
     getWidgetByName("Charge"):SetTextScale(0.75)
     getWidgetByName("Mad Leap"):SetTextScale(0.65)
     getWidgetByName("Mighty Leap"):SetTextScale(0.75)
     getWidgetByName("Aimed Shot"):SetTextScale(0.65)
+    getWidgetByName("Martyr's Guidance"):SetTextScale(0.65)
 
     if isTank then
         addWidgetToList(createTextView("Break", -140, 575, "E"))
@@ -119,6 +134,7 @@ function getWarriorUtilityCDMap()
         [7] = "Charge",
         [9] = "Mighty Leap",
         [27] = "Aimed Shot",
+        [29] = "Martyr's Guidance",
         [31] = "Mad Leap",
     }
     if isTank then
