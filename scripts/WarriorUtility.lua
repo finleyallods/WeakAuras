@@ -13,7 +13,7 @@ local HARPOON = "Harpoon"
 
 function getAdrenalineSurgeTextColor()
     if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) then
-        return nil
+        return COLOR_NONE
     end
 
     if getEnergy() < 25 or isOnCd(ADRENALINE_SURGE) then
@@ -25,7 +25,7 @@ end
 
 function getTurtleTextColor()
     if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) then
-        return nil
+        return COLOR_NONE
     end
 
     if getEnergy() < 25 or isOnCd(TURTLE) then
@@ -57,7 +57,7 @@ end
 
 function getMartyrsGuidanceTextColor()
     if isOnCd(MARTYRS_GUIDANCE) then
-        return nil
+        return COLOR_NONE
     end
 
     if  avatar.GetWarriorCombatAdvantage() <= 70 and getEnergy() <= 70 then
@@ -92,13 +92,17 @@ function getHarpoonTextColor()
 end
 
 function evaluateUtility()
-    evaluate(TURTLE, getTurtleTextColor)
-    evaluate(ADRENALINE_SURGE, getAdrenalineSurgeTextColor)
-    evaluate(CHARGE, getChargeTextColor)
-    evaluate(MAD_LEAP, getMadLeapTextColor)
-    evaluate(MIGHTY_LEAP, getMightyLeapTextColor)
-    evaluate(AIMED_SHOT, getAimedShotTextColor)
-    evaluate(MARTYRS_GUIDANCE, getMartyrsGuidanceTextColor)
+    local utility = {}
+
+    utility[TURTLE] = getTurtleTextColor()
+    utility[ADRENALINE_SURGE] = getAdrenalineSurgeTextColor()
+    utility[CHARGE] = getChargeTextColor()
+    utility[MAD_LEAP] = getMadLeapTextColor()
+    utility[MIGHTY_LEAP] = getMightyLeapTextColor()
+    utility[AIMED_SHOT] = getAimedShotTextColor()
+    utility[MARTYRS_GUIDANCE] = getMartyrsGuidanceTextColor()
+
+    displaySkills(utility)
 
     if isTank then
         evaluate(BREAK, getBreakTextColor)

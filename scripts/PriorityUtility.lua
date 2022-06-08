@@ -40,8 +40,8 @@ function evaluate(widgetName, textColorGetter)
     end
 end
 
-function displayPriority(priority)
-    for widgetName, textColor in pairs(priority) do
+function displaySkills(skills)
+    for widgetName, textColor in pairs(skills) do
         local widget = getWidgetByName(widgetName)
 
         if widget == nil then

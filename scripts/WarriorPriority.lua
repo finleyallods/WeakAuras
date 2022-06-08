@@ -143,8 +143,6 @@ function getWarriorPriority()
     local priority = {
         [DESTRUCTIVE_ATTACK] = COLOR_NONE,
         [FRACTURE] = COLOR_NONE,
-        [RAPID_BLOW] = COLOR_NONE,
-        [DEADLY_LUNGE] = COLOR_NONE,
     }
 
     if shouldBuildCombatAdvantage() then
@@ -162,6 +160,6 @@ function getWarriorPriority()
 end
 
 function evaluateWarriorPriority()
-    displayPriority(getWarriorPriority())
+    displaySkills(getWarriorPriority())
     evaluateUtility()
 end
