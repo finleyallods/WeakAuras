@@ -1,89 +1,48 @@
 local ENERGY_DESTRUCTIVE_ATTACK = 40
 local ENERGY_FRACTURE = 25
 
-function getDestructiveAttackTextColorAsTank()
-    if hasBuff("Flaming Blade") then
-        return nil
-    end
-
-    if avatar.GetWarriorCombatAdvantage() > 75 then
-        return getEnergy() >= ENERGY_DESTRUCTIVE_ATTACK and COLOR_BAD or COLOR_IMPOSSIBLE
-    end
-
-    if not hasBuff("Bloody Harvest") then
-        return getEnergy() >= ENERGY_DESTRUCTIVE_ATTACK and COLOR_NORMAL or COLOR_IMPOSSIBLE
-    end
-
-    return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or COLOR_BAD
-end
-
-function getFractureTextColorAsTank()
-    if not hasBuff("Flaming Blade") then
-        return nil
-    end
-
-    if avatar.GetWarriorCombatAdvantage() > 85 then
-        return getEnergy() >= ENERGY_FRACTURE and COLOR_BAD or COLOR_IMPOSSIBLE
-    end
-
-    if not hasBuff("Bloody Harvest") then
-        return getEnergy() >= ENERGY_FRACTURE and COLOR_NORMAL or COLOR_IMPOSSIBLE
-    end
-
-    return avatar.GetWarriorCombatAdvantage() < 45 and COLOR_NORMAL or COLOR_BAD
-end
-
-function getRapidBlowTextColorForBurstAsTank()
-    if not isOnCd("Deadly Lunge") and not hasBuff("Titan's Rage") then
-        return nil
-    end
-
-    if avatar.GetWarriorCombatAdvantage() < 25 then
-        return COLOR_IMPOSSIBLE
-    end
-
-    if hasBuff("Flaming Blade") and getEnergy() < ENERGY_FRACTURE then
-        return COLOR_NORMAL
-    end
-
-    if getEnergy() < ENERGY_DESTRUCTIVE_ATTACK then
-        return COLOR_NORMAL
-    end
-
-    return avatar.GetWarriorCombatAdvantage() >= 45 and COLOR_NORMAL or COLOR_BAD
-end
+local FLAMING_BLADE = "Flaming Blade"
+local DESTRUCTIVE_ATTACK = "Destructive Attack"
+local FRACTURE = "Fracture"
+local TRAMP = "Tramp"
+local VICIOUS_SPIN = "Vicious Spin"
+local RAPID_BLOW = "Rapid Blow"
+local DEADLY_LUNGE = "Deadly Lunge"
+local BERSERKER = "Berserker"
+local BLOODY_HARVEST = "Bloody Harvest"
+local TITANS_RAGE = "Titan's Rage"
 
 function getRapidBlowTextColorAsTank()
-    if not isOnCd("Deadly Lunge") and not isOnCd("Bloody Harvest") and not hasBuff("Titan's Rage") then
-        return nil
+    if shouldTramp() or shouldBuildCombatAdvantage() then
+        return COLOR_NONE
     end
 
-    if hasBuff("Bloody Harvest") then
-        return getRapidBlowTextColorForBurstAsTank()
+    if hasBuff(TITANS_RAGE) then
+        return COLOR_GOOD
     end
 
-    if avatar.GetWarriorCombatAdvantage() < 25 then
-        return nil
+    if hasBuff(BLOODY_HARVEST) and can(DEADLY_LUNGE) then
+        return COLOR_NONE
     end
 
-    if hasBuff("Flaming Blade") then
-        return getEnergy() < ENERGY_FRACTURE and COLOR_NORMAL or nil
+    if can(BLOODY_HARVEST) then
+        return COLOR_SECOND
     end
 
-    return getEnergy() < ENERGY_DESTRUCTIVE_ATTACK and COLOR_NORMAL or nil
+    return avatar.GetWarriorCombatAdvantage() >= 20 and COLOR_NORMAL or COLOR_IMPOSSIBLE
 end
 
 function getDeadlyLungeTextColorAsTank()
-    if isOnCd("Deadly Lunge") or hasBuff("Titan's Rage") then
-        return nil
+    if isOnCd(DEADLY_LUNGE) or hasBuff(TITANS_RAGE) then
+        return COLOR_NONE
     end
 
     return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_NORMAL or COLOR_IMPOSSIBLE
 end
 
 function getBloodyHarvestTextColorAsTank()
-    if isOnCd("Bloody Harvest") then
-        return nil
+    if isOnCd(BLOODY_HARVEST) then
+        return COLOR_NONE
     end
 
     if avatar.GetWarriorCombatAdvantage() < 30 then
@@ -94,20 +53,16 @@ function getBloodyHarvestTextColorAsTank()
 end
 
 function getViciousSpinTextColor()
-    if isOnCd("Vicious Spin") then
-        return nil
-    end
-
-    if getEnergy() < 47 then
-        return nil
+    if isOnCd(VICIOUS_SPIN) or getEnergy() < 47  then
+        return COLOR_NONE
     end
 
     return COLOR_AOE
 end
 
 function getTrampTextColor()
-    if isOnCd("Tramp") then
-        return nil
+    if isOnCd(TRAMP) then
+        return COLOR_NONE
     end
 
     if avatar.GetWarriorCombatAdvantage() < 55 then
@@ -117,15 +72,65 @@ function getTrampTextColor()
     return COLOR_NORMAL
 end
 
+function shouldTramp()
+    return can(TRAMP) and avatar.GetWarriorCombatAdvantage() >= 55
+end
+
+function getCombatAdvantageBuilderAsTank()
+    if hasBuff(FLAMING_BLADE) and getEnergy() >= ENERGY_FRACTURE then
+        return FRACTURE
+    end
+
+    if not hasBuff(FLAMING_BLADE) and getEnergy() >= ENERGY_DESTRUCTIVE_ATTACK then
+        return DESTRUCTIVE_ATTACK
+    end
+
+    return nil
+end
+
+function shouldBuildCombatAdvantageAsTank()
+    if not getCombatAdvantageBuilderAsTank() or shouldTramp() then
+        return false
+    end
+
+    if not hasBuff(TITANS_RAGE) and can(DEADLY_LUNGE) and avatar.GetWarriorCombatAdvantage() >= 25 then
+        return false
+    end
+
+    if avatar.GetWarriorCombatAdvantage() < 55 then
+        return true
+    end
+
+    if hasBuff(BLOODY_HARVEST) then
+        return false
+    end
+
+    if not hasBuff(FLAMING_BLADE) then
+        return avatar.GetWarriorCombatAdvantage() <= 68
+    end
+
+    return avatar.GetWarriorCombatAdvantage() <= 83
+end
+
 function evaluateWarriorTankPriority()
-    evaluate("Deadly Lunge", getDeadlyLungeTextColorAsTank)
-    evaluate("Destructive Attack", getDestructiveAttackTextColorAsTank)
-    evaluate("Fracture", getFractureTextColorAsTank)
-    evaluate("Rapid Blow", getRapidBlowTextColorAsTank)
-    evaluate("Bloody Harvest", getBloodyHarvestTextColorAsTank)
-    evaluate("Berserker", getBerserkerTextColor)
-    evaluate("Tramp", getTrampTextColor)
-    evaluate("Vicious Spin", getViciousSpinTextColor)
+    local priority = {
+        [DESTRUCTIVE_ATTACK] = COLOR_NONE,
+        [FRACTURE] = COLOR_NONE,
+    }
+
+    if shouldBuildCombatAdvantageAsTank() then
+        priority[getCombatAdvantageBuilderAsTank()] = COLOR_NORMAL
+    end
+
+    priority[DEADLY_LUNGE] = getDeadlyLungeTextColorAsTank()
+    priority[RAPID_BLOW] = getRapidBlowTextColorAsTank()
+    priority[BLOODY_HARVEST] = getBloodyHarvestTextColorAsTank()
+    priority[BERSERKER] = getBerserkerTextColor()
+    priority[TRAMP] = getTrampTextColor()
+    priority[VICIOUS_SPIN] = getViciousSpinTextColor()
+
+    displaySkills(priority)
+
     evaluateUtility()
 end
 
@@ -141,21 +146,40 @@ function onWarriorTankCombatAdvantageChanged()
 end
 
 local CD_SETTER_MAP = {
-    [2] = "Tramp",
-    [4] = "Vicious Spin",
-    [6] = "Deadly Lunge",
-    [29] = "Berserker",
-    [30] = "Bloody Harvest"
+    [2] = TRAMP,
+    [4] = VICIOUS_SPIN,
+    [6] = DEADLY_LUNGE,
+    [29] = BERSERKER,
+    [30] = BLOODY_HARVEST
 }
 
+local currentCds = {}
+
 function onWarriorTankActionPanelElementEffect(params)
+    if params.effect < 1 or params.effect > 2 then
+        return
+    end
+
+    if params.effect == 1 then
+        if params.duration < 1500 or currentCds[params.index] == true then
+            return
+        end
+        currentCds[params.index] = true
+    end
+
+    if params.effect == 2 then
+        if not currentCds[params.index] or currentCds[params.index] == false then
+            return
+        end
+        currentCds[params.index] = false
+    end
     checkAllCDs(CD_SETTER_MAP, params)
     checkAllCDs(getWarriorUtilityCDMap(), params)
     evaluateWarriorTankPriority()
 end
 
 function getWarriorTankBuffs()
-    return { "Bloody Harvest", "Flaming Blade", "Titan's Rage" }
+    return { BLOODY_HARVEST, FLAMING_BLADE, TITANS_RAGE }
 end
 
 function onWarriorTankBuffAdded(params)
@@ -210,14 +234,14 @@ end
 
 function initWarriorTank()
     addWidgetToList(createTextView("Combat Advantage", 40, 500, getCombatAdvantage()))
-    addWidgetToList(createTextView("Destructive Attack", 40, 425, "1"))
-    addWidgetToList(createTextView("Fracture", 90, 450, "2"))
-    addWidgetToList(createTextView("Tramp", 110, 500, "3"))
-    addWidgetToList(createTextView("Vicious Spin", -30, 500, "#"))
-    addWidgetToList(createTextView("Rapid Blow", -10, 550, "6"))
-    addWidgetToList(createTextView("Deadly Lunge", 90, 550, "7"))
-    addWidgetToList(createTextView("Berserker", -10, 650, "s6"))
-    addWidgetToList(createTextView("Bloody Harvest", 90, 650, "s7"))
+    addWidgetToList(createTextView(DESTRUCTIVE_ATTACK, 40, 425, "1"))
+    addWidgetToList(createTextView(FRACTURE, 90, 450, "2"))
+    addWidgetToList(createTextView(TRAMP, 110, 500, "3"))
+    addWidgetToList(createTextView(VICIOUS_SPIN, -30, 500, "#"))
+    addWidgetToList(createTextView(RAPID_BLOW, -10, 550, "6"))
+    addWidgetToList(createTextView(DEADLY_LUNGE, 90, 550, "7"))
+    addWidgetToList(createTextView(BERSERKER, -10, 650, "s6"))
+    addWidgetToList(createTextView(BLOODY_HARVEST, 90, 650, "s7"))
     addWidgetToList(createTextView("Trinket", 40, 625, "*"))
     addWidgetToList(createTextView("Health", -200, 700, "100"))
     addWidgetToList(createTextView("Damage Pool", -110, 545, "0"))

@@ -120,7 +120,7 @@ function shouldBuildCombatAdvantage()
         return false
     end
 
-    if hasBuff(BLOODY_HARVEST) and can(DEADLY_LUNGE) then
+    if hasBuff(BLOODY_HARVEST) and can(DEADLY_LUNGE) and avatar.GetWarriorCombatAdvantage() >= 25 then
         return false
     end
 
