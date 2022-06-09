@@ -7,14 +7,6 @@ function checkAllBuffs(buffs, params, activate)
 end
 
 function checkAllCDs(cds, params)
-    if params.effect < 1 or params.effect > 2 then
-        return
-    end
-
-    if params.effect == 1 and params.duration < 1500 then
-        return
-    end
-
     local timeStamp = params.effect == 1 and common.GetLocalDateTime() or nil
 
     for key, cdName in pairs(cds) do

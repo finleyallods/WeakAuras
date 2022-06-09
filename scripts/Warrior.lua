@@ -17,14 +17,33 @@ local CD_SETTER_MAP = {
     [30] = "Bloody Harvest"
 }
 
+local currentCds = {}
+
 function onWarriorActionPanelElementEffect(params)
+    if params.effect < 1 or params.effect > 2 then
+        return
+    end
+
+    if params.effect == 1 then
+        if params.duration < 1500 or currentCds[params.index] == true then
+            return
+        end
+        currentCds[params.index] = true
+    end
+
+    if params.effect == 2 then
+        if not currentCds[params.index] or currentCds[params.index] == false then
+            return
+        end
+        currentCds[params.index] = false
+    end
     checkAllCDs(CD_SETTER_MAP, params)
     checkAllCDs(getWarriorUtilityCDMap(), params)
     evaluateWarriorPriority()
 end
 
 function getWarriorBuffs()
-    return {"Bloody Harvest", "Flaming Blade"}
+    return { "Bloody Harvest", "Flaming Blade" }
 end
 
 function onWarriorBuffAdded(params)
