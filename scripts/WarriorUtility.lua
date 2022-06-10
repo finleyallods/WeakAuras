@@ -10,9 +10,11 @@ local MARTYRS_GUIDANCE = "Martyr's Guidance"
 local BREAK = "Break"
 local DELIVERANCE = "Deliverance"
 local HARPOON = "Harpoon"
+local DEEP_DEFENSE = "Deep Defense"
+local BLOODY_HARVEST = "Bloody Harvest"
 
 function getAdrenalineSurgeTextColor()
-    if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) then
+    if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) or hasBuff(DEEP_DEFENSE) then
         return COLOR_NONE
     end
 
@@ -20,11 +22,15 @@ function getAdrenalineSurgeTextColor()
         return COLOR_IMPOSSIBLE
     end
 
+    if not hasBuff(BLOODY_HARVEST) then
+        return COLOR_GOOD
+    end
+
     return COLOR_NORMAL
 end
 
 function getTurtleTextColor()
-    if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) then
+    if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) or hasBuff(DEEP_DEFENSE) then
         return COLOR_NONE
     end
 
@@ -32,7 +38,27 @@ function getTurtleTextColor()
         return COLOR_IMPOSSIBLE
     end
 
+    if not hasBuff(BLOODY_HARVEST) then
+        return COLOR_GOOD
+    end
+
     return COLOR_NORMAL
+end
+
+function getDeepDefenceTextColor()
+    if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) or hasBuff(DEEP_DEFENSE) then
+        return COLOR_NONE
+    end
+
+    if isOnCd(DEEP_DEFENSE) then
+        return COLOR_IMPOSSIBLE
+    end
+
+    if not hasBuff(BLOODY_HARVEST) then
+        return COLOR_GOOD
+    end
+
+    return isOnCd(DEEP_DEFENSE) and COLOR_IMPOSSIBLE or COLOR_NORMAL
 end
 
 function getChargeTextColor()
@@ -102,13 +128,15 @@ function evaluateUtility()
     utility[AIMED_SHOT] = getAimedShotTextColor()
     utility[MARTYRS_GUIDANCE] = getMartyrsGuidanceTextColor()
 
-    displaySkills(utility)
 
     if isTank then
-        evaluate(BREAK, getBreakTextColor)
-        evaluate(DELIVERANCE, getDeliveranceTextColor)
-        evaluate(HARPOON, getHarpoonTextColor)
+        utility[BREAK] = getBreakTextColor()
+        utility[DELIVERANCE] = getDeliveranceTextColor()
+        utility[HARPOON] = getHarpoonTextColor()
+        utility[DEEP_DEFENSE] = getDeepDefenceTextColor()
     end
+
+    displaySkills(utility)
 end
 
 function initWarriorUtility(initTank)
@@ -131,15 +159,17 @@ function initWarriorUtility(initTank)
         addWidgetToList(createTextView(BREAK, -140, 575, "E"))
         addWidgetToList(createTextView(DELIVERANCE, -125, 600, "sE"))
         addWidgetToList(createTextView(HARPOON, -225, 575, "G"))
+        addWidgetToList(createTextView(DEEP_DEFENSE, -185, 490, "+"))
 
         getWidgetByName(BREAK):SetTextScale(0.75)
         getWidgetByName(DELIVERANCE):SetTextScale(0.65)
         getWidgetByName(HARPOON):SetTextScale(0.75)
+        getWidgetByName(DEEP_DEFENSE):SetTextScale(0.75)
     end
 end
 
 function getWarriorUtilityBuffs()
-    return { TURTLE, ADRENALINE_SURGE }
+    return { TURTLE, ADRENALINE_SURGE, DEEP_DEFENSE }
 end
 
 function getWarriorUtilityCDMap()
@@ -156,6 +186,7 @@ function getWarriorUtilityCDMap()
         cdMap[8] = BREAK
         cdMap[32]= DELIVERANCE
         cdMap[10] = HARPOON
+        cdMap[49] = DEEP_DEFENSE
     end
 
     return cdMap

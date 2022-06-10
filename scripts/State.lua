@@ -15,6 +15,13 @@ function hasBuff(buffName)
     return state.buffs[buffName] ~= nil
 end
 
+function getMsOnBuff(buffName)
+    local buffId = state.buffs[buffName]
+    local buff =  object.GetBuffInfo( buffId )
+
+    return buff.remainingMs
+end
+
 function setCD(cdName, timeStamp, duration)
     if timeStamp ~= nil or duration ~= nil then
         state.cds[cdName] = {}

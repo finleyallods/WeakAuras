@@ -66,6 +66,12 @@ local onEventUnitHealthChangedMap = {
     PRIEST_DPS = nil
 }
 
+local onEventSecondTimerMap = {
+    WARRIOR_DPS = nil,
+    WARRIOR_TANK = onWarriorTankEventSecondTimer,
+    PRIEST_DPS = nil
+}
+
 function delegateEvent(params, delegate)
     if params.objectId ~= nil and params.objectId ~= myId then
         return
@@ -126,6 +132,10 @@ function onEventUnitHealthChanged(params)
     delegateEvent(params, onEventUnitHealthChangedMap[currentSpec])
 end
 
+function onEventSecondTimer(params)
+    delegateEvent(params, onEventSecondTimerMap[currentSpec])
+end
+
 function onTalentsChanged()
     debugMessage("Talents have changed.")
     initClass()
@@ -171,6 +181,7 @@ function init()
     common.RegisterEventHandler(onEventAvatarWarriorDamagePoolChanged, "EVENT_AVATAR_WARRIOR_DAMAGE_POOL_CHANGED")
     common.RegisterEventHandler(onEventUnitHealthChanged, "EVENT_UNIT_DAMAGE_RECEIVED")
     common.RegisterEventHandler(onEventUnitHealthChanged, "EVENT_HEALING_RECEIVED")
+    common.RegisterEventHandler(onEventSecondTimer, "EVENT_SECOND_TIMER")
 
     initClass()
 end

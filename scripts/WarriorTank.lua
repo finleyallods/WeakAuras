@@ -74,6 +74,10 @@ function getViciousSpinTextColor()
 end
 
 function getTrampTextColor()
+    if hasBuff(TITANS_RAGE) then
+        return COLOR_BUFF
+    end
+
     if isOnCd(TRAMP) then
         return COLOR_NONE
     end
@@ -133,7 +137,8 @@ function shouldBuildCombatAdvantageAsTank()
     return avatar.GetWarriorCombatAdvantage() <= 83
 end
 
-local lastBloodyHarvestText = nil
+local lastBloodyHarvestText
+local lastTrampText
 
 function evaluateWarriorTankPriority()
     local priority = {
@@ -152,7 +157,28 @@ function evaluateWarriorTankPriority()
     priority[TRAMP] = getTrampTextColor()
     priority[VICIOUS_SPIN] = getViciousSpinTextColor()
 
+    local trampText
     local bloodyHarvestText
+
+    if hasBuff(TITANS_RAGE) then
+        trampText = "("..math.round(getMsOnBuff(TITANS_RAGE) / SECOND)..")"
+    else
+        trampText = "3"
+    end
+
+    if trampText == "3" and lastTrampText ~= "3" then
+        getWidgetByName(TRAMP):SetTextScale(1)
+    end
+
+    if trampText ~= "3" and lastTrampText == "3" then
+        getWidgetByName(TRAMP):SetTextScale(0.75)
+    end
+
+    if trampText ~= lastTrampText then
+        lastTrampText = trampText
+        getWidgetByName(TRAMP):SetVal("value", trampText)
+
+    end
 
     if isOnCd(BLOODY_HARVEST) and getMsOnCd(BLOODY_HARVEST) < 3 * SECOND then
         bloodyHarvestText = "-"..math.round(getMsOnCd(BLOODY_HARVEST) / SECOND).."-"
@@ -276,6 +302,10 @@ end
 
 function onWarriorTankEventAvatarWarriorDamagePoolChanged(params)
     getWidgetByName("Damage Pool"):SetVal("value", tostring(math.round(params.value / SECOND)))
+end
+
+function onWarriorTankEventSecondTimer(params)
+    evaluateWarriorTankPriority()
 end
 
 function initWarriorTank()
