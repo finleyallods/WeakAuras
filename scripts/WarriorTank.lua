@@ -1,3 +1,5 @@
+local SECOND = 1000
+
 local ENERGY_DESTRUCTIVE_ATTACK = 40
 local ENERGY_FRACTURE = 25
 
@@ -37,20 +39,15 @@ function getDeadlyLungeTextColorAsTank()
         return COLOR_NONE
     end
 
-    if shouldTramp() or shouldBuildCombatAdvantage() then
+    if shouldTramp() or shouldBuildCombatAdvantage() or hasBuff(TITANS_RAGE) then
         return COLOR_NONE
     end
-
-    if hasBuff(TITANS_RAGE) then
-        return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_BAD or COLOR_NONE
-    end
-
     return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_NORMAL or COLOR_IMPOSSIBLE
 end
 
 function getBloodyHarvestTextColorAsTank()
     if isOnCd(BLOODY_HARVEST) then
-        return COLOR_NONE
+        return getMsOnCd(BLOODY_HARVEST) < 3 * SECOND and COLOR_NORMAL or COLOR_NONE
     end
 
     if avatar.GetWarriorCombatAdvantage() < 30 then
@@ -73,7 +70,7 @@ function getViciousSpinTextColor()
         return hasBuff(TITANS_RAGE) and COLOR_IMPOSSIBLE or COLOR_NONE
     end
 
-    return hasBuff() and COLOR_AOE or COLOR_BAD
+    return hasBuff(TITANS_RAGE) and COLOR_AOE or COLOR_BAD
 end
 
 function getTrampTextColor()
@@ -109,11 +106,11 @@ function shouldBuildCombatAdvantageAsTank()
         return false
     end
 
-    if getMsOnCd(TRAMP) < 2000 and hasBuff(BLOODY_HARVEST) and avatar.GetWarriorCombatAdvantage() < 55 then
+    if getMsOnCd(TRAMP) < 2 * SECOND and hasBuff(BLOODY_HARVEST) and avatar.GetWarriorCombatAdvantage() < 55 then
         return true
     end
 
-    if getMsOnCd(TRAMP) < 1000 and hasBuff(BLOODY_HARVEST) and avatar.GetWarriorCombatAdvantage() < 68 and not hasBuff(FLAMING_BLADE) then
+    if getMsOnCd(TRAMP) < SECOND and hasBuff(BLOODY_HARVEST) and avatar.GetWarriorCombatAdvantage() < 68 and not hasBuff(FLAMING_BLADE) then
         return true
     end
 
@@ -136,6 +133,8 @@ function shouldBuildCombatAdvantageAsTank()
     return avatar.GetWarriorCombatAdvantage() <= 83
 end
 
+local lastBloodyHarvestText = nil
+
 function evaluateWarriorTankPriority()
     local priority = {
         [DESTRUCTIVE_ATTACK] = COLOR_NONE,
@@ -152,6 +151,29 @@ function evaluateWarriorTankPriority()
     priority[BERSERKER] = getBerserkerTextColor()
     priority[TRAMP] = getTrampTextColor()
     priority[VICIOUS_SPIN] = getViciousSpinTextColor()
+
+    local bloodyHarvestText
+
+    if isOnCd(BLOODY_HARVEST) and getMsOnCd(BLOODY_HARVEST) < 3 * SECOND then
+        bloodyHarvestText = "-"..math.round(getMsOnCd(BLOODY_HARVEST) / SECOND).."-"
+    else
+        bloodyHarvestText = "s7"
+    end
+
+    if bloodyHarvestText == "s7" and lastBloodyHarvestText ~= "s7" then
+        getWidgetByName(BLOODY_HARVEST):SetTextScale(1)
+    end
+
+    if bloodyHarvestText ~= "s7" and lastBloodyHarvestText == "s7" then
+        getWidgetByName(BLOODY_HARVEST):SetTextScale(0.75)
+    end
+
+    if bloodyHarvestText ~= lastBloodyHarvestText then
+        lastBloodyHarvestText = bloodyHarvestText
+        getWidgetByName(BLOODY_HARVEST):SetVal("value", bloodyHarvestText)
+
+    end
+
 
     displaySkills(priority)
 
@@ -243,7 +265,7 @@ function onWarriorTankEventEquipmentItemEffect(params)
     getWidgetByName("Trinket"):Show(activate)
 end
 
-function onEventUnitHealthChanged(params)
+function onWarriorTankEventUnitHealthChanged(params)
     if not isMe(params.target) then
         return
     end
@@ -252,8 +274,8 @@ function onEventUnitHealthChanged(params)
     getWidgetByName("Health"):SetVal("value", tostring(hp))
 end
 
-function onEventAvatarWarriorDamagePoolChanged(params)
-    getWidgetByName("Damage Pool"):SetVal("value", tostring(math.round(params.value / 1000)))
+function onWarriorTankEventAvatarWarriorDamagePoolChanged(params)
+    getWidgetByName("Damage Pool"):SetVal("value", tostring(math.round(params.value / SECOND)))
 end
 
 function initWarriorTank()
@@ -270,10 +292,6 @@ function initWarriorTank()
     addWidgetToList(createTextView("Health", -200, 700, "100"))
     addWidgetToList(createTextView("Damage Pool", -110, 545, "0"))
     getWidgetByName("Damage Pool"):SetTextScale(0.75)
-
-    common.RegisterEventHandler(onEventAvatarWarriorDamagePoolChanged, "EVENT_AVATAR_WARRIOR_DAMAGE_POOL_CHANGED")
-    common.RegisterEventHandler(onEventUnitHealthChanged, "EVENT_UNIT_DAMAGE_RECEIVED")
-    common.RegisterEventHandler(onEventUnitHealthChanged, "EVENT_HEALING_RECEIVED")
 
     initWarriorUtility(true)
 

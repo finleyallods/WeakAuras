@@ -54,6 +54,18 @@ local onEventEquipmentItemEffectMap = {
     PRIEST_DPS = nil
 }
 
+local onEventAvatarWarriorDamagePoolChangedMap = {
+    WARRIOR_DPS = nil,
+    WARRIOR_TANK = onWarriorTankEventAvatarWarriorDamagePoolChanged(),
+    PRIEST_DPS = nil
+}
+
+local onEventUnitHealthChangedMap = {
+    WARRIOR_DPS = nil,
+    WARRIOR_TANK = onWarriorTankEventUnitHealthChanged(),
+    PRIEST_DPS = nil
+}
+
 function delegateEvent(params, delegate)
     if params.objectId ~= nil and params.objectId ~= myId then
         return
@@ -106,6 +118,14 @@ function onEventEquipmentItemEffect(params)
     delegateEvent(params, onEventEquipmentItemEffectMap[currentSpec])
 end
 
+function onEventAvatarWarriorDamagePoolChanged(params)
+    delegateEvent(params, onEventAvatarWarriorDamagePoolChangedMap[currentSpec])
+end
+
+function onEventUnitHealthChanged(params)
+    delegateEvent(params, onEventUnitHealthChangedMap[currentSpec])
+end
+
 function onTalentsChanged()
     debugMessage("Talents have changed.")
     initClass()
@@ -148,6 +168,9 @@ function init()
     common.RegisterEventHandler(onEventEquipmentItemEffect, "EVENT_EQUIPMENT_ITEM_EFFECT")
     common.RegisterEventHandler(onTalentsChanged, "EVENT_TALENTS_CHANGED")
     common.RegisterEventHandler(onTalentsChanged, "EVENT_AVATAR_CLASS_FORM_CHANGED")
+    common.RegisterEventHandler(onEventAvatarWarriorDamagePoolChanged, "EVENT_AVATAR_WARRIOR_DAMAGE_POOL_CHANGED")
+    common.RegisterEventHandler(onEventUnitHealthChanged, "EVENT_UNIT_DAMAGE_RECEIVED")
+    common.RegisterEventHandler(onEventUnitHealthChanged, "EVENT_HEALING_RECEIVED")
 
     initClass()
 end
