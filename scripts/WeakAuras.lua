@@ -129,6 +129,10 @@ function onEventAvatarWarriorDamagePoolChanged(params)
 end
 
 function onEventUnitHealthChanged(params)
+    if not isMe(params.target) then
+        return
+    end
+
     delegateEvent(params, onEventUnitHealthChangedMap[currentSpec])
 end
 

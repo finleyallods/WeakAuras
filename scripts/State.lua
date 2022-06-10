@@ -15,11 +15,26 @@ function hasBuff(buffName)
     return state.buffs[buffName] ~= nil
 end
 
+local function isBuffed (buffId)
+    for key, value in pairs(object.GetBuffs( avatar.GetId())) do
+        if value == buffId then
+            return true
+        end
+    end
+
+    return false
+end
+
+
 function getMsOnBuff(buffName)
     local buffId = state.buffs[buffName]
-    local buff =  object.GetBuffInfo( buffId )
 
-    return buff.remainingMs
+    if not buffId or not isBuffed (buffId) then
+        return 0
+    end
+    local buffInfo =  object.GetBuffInfo( buffId )
+
+    return buffInfo and buffInfo.remainingMs or 9
 end
 
 function setCD(cdName, timeStamp, duration)

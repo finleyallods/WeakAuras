@@ -292,12 +292,8 @@ end
 
 local lastHp = 100
 
-function onWarriorTankEventUnitHealthChanged(params)
-    if not isMe(params.target) then
-        return
-    end
-
-    local hp = object.GetHealthInfo(params.target).valuePercents
+function onWarriorTankEventUnitHealthChanged()
+    local hp = object.GetHealthInfo(avatar.GetId()).valuePercents
     local widget = getWidgetByName("Health")
     local color
 
@@ -320,7 +316,7 @@ end
 local lastStagger = 0
 
 function onWarriorTankEventAvatarWarriorDamagePoolChanged(params)
-    local stagger = math.round(params.value / 10)
+    local stagger = math.round(params.value / SECOND)
     local widget = getWidgetByName("Damage Pool")
     local color
 
@@ -340,8 +336,9 @@ function onWarriorTankEventAvatarWarriorDamagePoolChanged(params)
     end
 end
 
-function onWarriorTankEventSecondTimer(params)
+function onWarriorTankEventSecondTimer()
     evaluateWarriorTankPriority()
+    onWarriorTankEventUnitHealthChanged()
 end
 
 function initWarriorTank()
