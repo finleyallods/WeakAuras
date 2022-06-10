@@ -56,13 +56,13 @@ local onEventEquipmentItemEffectMap = {
 
 local onEventAvatarWarriorDamagePoolChangedMap = {
     WARRIOR_DPS = nil,
-    WARRIOR_TANK = onWarriorTankEventAvatarWarriorDamagePoolChanged(),
+    WARRIOR_TANK = onWarriorTankEventAvatarWarriorDamagePoolChanged,
     PRIEST_DPS = nil
 }
 
 local onEventUnitHealthChangedMap = {
     WARRIOR_DPS = nil,
-    WARRIOR_TANK = onWarriorTankEventUnitHealthChanged(),
+    WARRIOR_TANK = onWarriorTankEventUnitHealthChanged,
     PRIEST_DPS = nil
 }
 
