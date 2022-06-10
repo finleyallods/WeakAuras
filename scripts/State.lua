@@ -25,6 +25,16 @@ function setCD(cdName, timeStamp, duration)
     end
 end
 
+function getMsOnCd(cdName)
+    if can(cdName) then
+        return 0
+    end
+
+    local msPassed = common.GetLocalDateTime().overallMs - state.cds[cdName].timeStamp
+
+    return state.cds[cdName].duration - msPassed
+end
+
 function isOnCd(cdName)
     return state.cds[cdName] ~= nil
 end

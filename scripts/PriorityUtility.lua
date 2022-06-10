@@ -7,7 +7,7 @@ function checkAllBuffs(buffs, params, activate)
 end
 
 function checkAllCDs(cds, params)
-    local timeStamp = params.effect == 1 and common.GetLocalDateTime() or nil
+    local timeStamp = params.effect == 1 and common.GetLocalDateTime().overallMs or nil
 
     for key, cdName in pairs(cds) do
         if params.index == key then

@@ -10,7 +10,7 @@ local RAPID_BLOW = "Rapid Blow"
 local DEADLY_LUNGE = "Deadly Lunge"
 local BERSERKER = "Berserker"
 local BLOODY_HARVEST = "Bloody Harvest"
-local TITANS_RAGE = "Titan's Rage"
+local TITANS_RAGE = "Titan’s Rage"
 
 function getRapidBlowTextColorAsTank()
     if shouldTramp() or shouldBuildCombatAdvantage() then
@@ -33,8 +33,16 @@ function getRapidBlowTextColorAsTank()
 end
 
 function getDeadlyLungeTextColorAsTank()
-    if isOnCd(DEADLY_LUNGE) or hasBuff(TITANS_RAGE) then
+    if isOnCd(DEADLY_LUNGE) then
         return COLOR_NONE
+    end
+
+    if shouldTramp() or shouldBuildCombatAdvantage() then
+        return COLOR_NONE
+    end
+
+    if hasBuff(TITANS_RAGE) then
+        return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_BAD or COLOR_NONE
     end
 
     return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_NORMAL or COLOR_IMPOSSIBLE
@@ -49,15 +57,23 @@ function getBloodyHarvestTextColorAsTank()
         return COLOR_IMPOSSIBLE
     end
 
-    return COLOR_NORMAL
+    if getMsOnCd(TRAMP) < 7000 then
+        return COLOR_GOOD
+    end
+
+    return COLOR_BAD
 end
 
 function getViciousSpinTextColor()
-    if isOnCd(VICIOUS_SPIN) or getEnergy() < 47  then
+    if isOnCd(VICIOUS_SPIN) then
         return COLOR_NONE
     end
 
-    return COLOR_AOE
+    if getEnergy() < 47 then
+        return hasBuff(TITANS_RAGE) and COLOR_IMPOSSIBLE or COLOR_NONE
+    end
+
+    return hasBuff() and COLOR_AOE or COLOR_BAD
 end
 
 function getTrampTextColor()
@@ -66,14 +82,14 @@ function getTrampTextColor()
     end
 
     if avatar.GetWarriorCombatAdvantage() < 55 then
-        return COLOR_IMPOSSIBLE
+        return hasBuff(BLOODY_HARVEST) and COLOR_IMPOSSIBLE or COLOR_NONE
     end
 
-    return COLOR_NORMAL
+    return hasBuff(BLOODY_HARVEST) and COLOR_GOOD or COLOR_BAD
 end
 
 function shouldTramp()
-    return can(TRAMP) and avatar.GetWarriorCombatAdvantage() >= 55
+    return hasBuff(BLOODY_HARVEST) and can(TRAMP) and avatar.GetWarriorCombatAdvantage() >= 55
 end
 
 function getCombatAdvantageBuilderAsTank()
@@ -91,6 +107,14 @@ end
 function shouldBuildCombatAdvantageAsTank()
     if not getCombatAdvantageBuilderAsTank() or shouldTramp() then
         return false
+    end
+
+    if getMsOnCd(TRAMP) < 2000 and hasBuff(BLOODY_HARVEST) and avatar.GetWarriorCombatAdvantage() < 55 then
+        return true
+    end
+
+    if getMsOnCd(TRAMP) < 1000 and hasBuff(BLOODY_HARVEST) and avatar.GetWarriorCombatAdvantage() < 68 and not hasBuff(FLAMING_BLADE) then
+        return true
     end
 
     if not hasBuff(TITANS_RAGE) and can(DEADLY_LUNGE) and avatar.GetWarriorCombatAdvantage() >= 25 then
