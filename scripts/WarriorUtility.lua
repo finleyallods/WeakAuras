@@ -156,8 +156,8 @@ function initWarriorUtility(initTank)
     getWidgetByName(MARTYRS_GUIDANCE):SetTextScale(0.65)
 
     if isTank then
-        addWidgetToList(createTextView(BREAK, -140, 575, "E"))
-        addWidgetToList(createTextView(DELIVERANCE, -125, 600, "sE"))
+        addWidgetToList(createTextView(BREAK, -140, 550, "E"))
+        addWidgetToList(createTextView(DELIVERANCE, -125, 575, "sE"))
         addWidgetToList(createTextView(HARPOON, -225, 575, "G"))
         addWidgetToList(createTextView(DEEP_DEFENSE, -185, 490, "+"))
 

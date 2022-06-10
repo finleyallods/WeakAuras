@@ -161,7 +161,7 @@ function evaluateWarriorTankPriority()
     local bloodyHarvestText
 
     if hasBuff(TITANS_RAGE) then
-        trampText = "("..math.round(getMsOnBuff(TITANS_RAGE) / SECOND)..")"
+        trampText = "(" .. math.round(getMsOnBuff(TITANS_RAGE) / SECOND) .. ")"
     else
         trampText = "3"
     end
@@ -181,7 +181,7 @@ function evaluateWarriorTankPriority()
     end
 
     if isOnCd(BLOODY_HARVEST) and getMsOnCd(BLOODY_HARVEST) < 3 * SECOND then
-        bloodyHarvestText = "-"..math.round(getMsOnCd(BLOODY_HARVEST) / SECOND).."-"
+        bloodyHarvestText = "-" .. math.round(getMsOnCd(BLOODY_HARVEST) / SECOND) .. "-"
     else
         bloodyHarvestText = "s7"
     end
@@ -199,7 +199,6 @@ function evaluateWarriorTankPriority()
         getWidgetByName(BLOODY_HARVEST):SetVal("value", bloodyHarvestText)
 
     end
-
 
     displaySkills(priority)
 
@@ -291,17 +290,54 @@ function onWarriorTankEventEquipmentItemEffect(params)
     getWidgetByName("Trinket"):Show(activate)
 end
 
+local lastHp = 100
+
 function onWarriorTankEventUnitHealthChanged(params)
     if not isMe(params.target) then
         return
     end
-    local hp = object.GetHealthInfo(params.target).valuePercents
 
-    getWidgetByName("Health"):SetVal("value", tostring(hp))
+    local hp = object.GetHealthInfo(params.target).valuePercents
+    local widget = getWidgetByName("Health")
+    local color
+
+    if hp >= 80 then
+        color = COLOR_NORMAL
+    elseif hp >= 40 then
+        color = COLOR_SECOND
+    elseif hp >= 20 then
+        color = COLOR_BAD
+    else
+        color = COLOR_IMPOSSIBLE
+    end
+
+    if hp ~= lastHp then
+        widget:SetVal("value", "["..tostring(hp).."]")
+        setTextColor(widget, color)
+    end
 end
 
+local lastStagger = 0
+
 function onWarriorTankEventAvatarWarriorDamagePoolChanged(params)
-    getWidgetByName("Damage Pool"):SetVal("value", tostring(math.round(params.value / SECOND)))
+    local stagger = math.round(params.value / 10)
+    local widget = getWidgetByName("Damage Pool")
+    local color
+
+    if stagger < 100 then
+        color = COLOR_NORMAL
+    elseif stagger < 250 then
+        color = COLOR_SECOND
+    elseif stagger < 500 then
+        color = COLOR_BAD
+    else
+        color = COLOR_IMPOSSIBLE
+    end
+
+    if stagger ~= lastStagger then
+        widget:SetVal("value", tostring(stagger))
+        setTextColor(widget, color)
+    end
 end
 
 function onWarriorTankEventSecondTimer(params)
@@ -319,8 +355,8 @@ function initWarriorTank()
     addWidgetToList(createTextView(BERSERKER, -10, 650, "s6"))
     addWidgetToList(createTextView(BLOODY_HARVEST, 90, 650, "s7"))
     addWidgetToList(createTextView("Trinket", 40, 625, "*"))
-    addWidgetToList(createTextView("Health", -200, 700, "100"))
-    addWidgetToList(createTextView("Damage Pool", -110, 545, "0"))
+    addWidgetToList(createTextView("Health", -200, 425, "[100]"))
+    addWidgetToList(createTextView("Damage Pool", -125, 460, "0"))
     getWidgetByName("Damage Pool"):SetTextScale(0.75)
 
     initWarriorUtility(true)

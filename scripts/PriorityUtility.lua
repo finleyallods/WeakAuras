@@ -16,22 +16,6 @@ function checkAllCDs(cds, params)
     end
 end
 
-function evaluate(widgetName, textColorGetter)
-    local widget = getWidgetByName(widgetName)
-
-    if widget == nil then
-        return
-    end
-
-    local textColor = textColorGetter()
-    if textColor ~= nil then
-        show(widget)
-        setTextColor(widget, textColor)
-    else
-        hide(widget)
-    end
-end
-
 function displaySkills(skills)
     for widgetName, textColor in pairs(skills) do
         local widget = getWidgetByName(widgetName)
