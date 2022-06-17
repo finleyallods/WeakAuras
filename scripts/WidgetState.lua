@@ -9,7 +9,7 @@ function getWidgetByName(widgetName)
 end
 
 function destroyAllWidgets()
-    for key, value in pairs(currentWidgets) do
-        destroyWidget(value)
+    for widgetName, widget in pairs(currentWidgets) do
+        destroyWidget(widget)
     end
 end

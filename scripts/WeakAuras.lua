@@ -142,6 +142,7 @@ end
 
 function onTalentsChanged()
     debugMessage("Talents have changed.")
+    destroyAllWidgets()
     initClass()
 end
 
@@ -167,7 +168,6 @@ function initClass()
         end
     else
         sendMessage("Aspect is missing.")
-        destroyAllWidgets()
     end
 end
 

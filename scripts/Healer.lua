@@ -22,10 +22,10 @@ function isHeavenlySmiteCD()
 end
 
 function onPriestActionPanelElementEffect(params)
-    if params.effect == 1 and params.index == 9 then
+    if params.effect == 1 and params.index == 7 then
         wtCleansingFlame:Show(false)
     end
-    if params.effect == 2 and params.index == 9 then
+    if params.effect == 2 and params.index == 7 then
         wtCleansingFlame:Show(true)
     end
 

@@ -82,8 +82,14 @@ function getTrampTextColor()
         return COLOR_NONE
     end
 
+    local bloodyHarvest = can(BLOODY_HARVEST) or hasBuff(BLOODY_HARVEST)
+
     if avatar.GetWarriorCombatAdvantage() < 55 then
-        return hasBuff(BLOODY_HARVEST) and COLOR_IMPOSSIBLE or COLOR_NONE
+        return bloodyHarvest and COLOR_IMPOSSIBLE or COLOR_NONE
+    end
+
+    if can(BLOODY_HARVEST) then
+        return COLOR_SECOND
     end
 
     return hasBuff(BLOODY_HARVEST) and COLOR_GOOD or COLOR_BAD
@@ -353,7 +359,7 @@ function initWarriorTank()
     addWidgetToList(createTextView(BLOODY_HARVEST, 90, 650, "s7"))
     addWidgetToList(createTextView("Trinket", 40, 625, "*"))
     addWidgetToList(createTextView("Health", -200, 425, "[100]"))
-    addWidgetToList(createTextView("Damage Pool", -125, 460, "0"))
+    addWidgetToList(createTextView("Damage Pool", 275, 525, "0"))
     getWidgetByName("Damage Pool"):SetTextScale(0.75)
 
     initWarriorUtility(true)
