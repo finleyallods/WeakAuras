@@ -86,7 +86,7 @@ function onBuffAdded(params)
     for aspectKey, aspectValue in pairs(aspectMAP) do
         if userMods.FromWString(params.buffName) == aspectValue then
             debugMessage(aspectValue.." was added.")
-            initClass()
+            --initClass()
         end
     end
 
@@ -97,7 +97,7 @@ function onBuffRemoved(params)
     for aspectKey, aspectValue in pairs(aspectMAP) do
         if userMods.FromWString(params.buffName) == aspectValue then
             debugMessage(aspectValue.." was removed.")
-            initClass()
+            --initClass()
         end
     end
 
