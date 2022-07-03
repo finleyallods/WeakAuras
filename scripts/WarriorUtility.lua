@@ -7,7 +7,6 @@ local CHARGE = "Charge"
 local MAD_LEAP = "Mad Leap"
 local MIGHTY_LEAP = "Mighty Leap"
 local AIMED_SHOT = "Aimed Shot"
-local MARTYRS_GUIDANCE = "Martyr's Guidance"
 local BREAK = "Break"
 local DELIVERANCE = "Deliverance"
 local HARPOON = "Harpoon"
@@ -67,18 +66,6 @@ function getMightyLeapTextColor()
     end
 
     return COLOR_NORMAL
-end
-
-function getMartyrsGuidanceTextColor()
-    if isOnCd(MARTYRS_GUIDANCE) then
-        return COLOR_NONE
-    end
-
-    if avatar.GetWarriorCombatAdvantage() <= 70 and getEnergy() <= 70 then
-        return COLOR_GOOD
-    end
-
-    return COLOR_BAD
 end
 
 function getAimedShotTextColor()
@@ -149,7 +136,6 @@ function evaluateUtility()
     utility[MAD_LEAP] = getMadLeapTextColor()
     utility[MIGHTY_LEAP] = getMightyLeapTextColor()
     utility[AIMED_SHOT] = getAimedShotTextColor()
-    utility[MARTYRS_GUIDANCE] = getMartyrsGuidanceTextColor()
     utility[GLINT] = getGlintTextColor()
     utility[KICK] = getKickTextColor()
 
@@ -173,7 +159,6 @@ function initWarriorUtility(initTank)
     addWidgetToList(createTextView(MAD_LEAP, -285, 575, "sQ"))
     addWidgetToList(createTextView(MIGHTY_LEAP, -250, 550, "R"))
     addWidgetToList(createTextView(AIMED_SHOT, -285, 525, "s4"))
-    addWidgetToList(createTextView(MARTYRS_GUIDANCE, 35, 645, "*"))
     addWidgetToList(createTextView(GLINT, -235, 575, "sR"))
     addWidgetToList(createTextView(KICK, -200, 550, "F"))
 
@@ -181,7 +166,6 @@ function initWarriorUtility(initTank)
     getWidgetByName(MAD_LEAP):SetTextScale(0.65)
     getWidgetByName(MIGHTY_LEAP):SetTextScale(0.75)
     getWidgetByName(AIMED_SHOT):SetTextScale(0.65)
-    getWidgetByName(MARTYRS_GUIDANCE):SetTextScale(0.65)
     getWidgetByName(GLINT):SetTextScale(0.65)
     getWidgetByName(KICK):SetTextScale(0.75)
 
@@ -216,7 +200,6 @@ function getWarriorUtilityCDMap()
         [9] = MIGHTY_LEAP,
         [10] = KICK,
         [27] = AIMED_SHOT,
-        [25] = MARTYRS_GUIDANCE,
         [31] = MAD_LEAP,
         [33] = GLINT
     }
