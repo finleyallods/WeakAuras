@@ -279,23 +279,6 @@ function onWarriorTankBuffRemoved(params)
     evaluateWarriorTankPriority()
 end
 
-function onWarriorTankEventEquipmentItemEffect(params)
-    if params.slot ~= DRESS_SLOT_TRINKET or params.slotType ~= ITEM_CONT_EQUIPMENT then
-        return
-    end
-
-    if params.effect ~= EFFECT_TYPE_COOLDOWN_STARTED and params.effect ~= EFFECT_TYPE_COOLDOWN_FINISHED then
-        return
-    end
-
-    if params.effect == EFFECT_TYPE_COOLDOWN_STARTED and params.duration < 1500 then
-        return
-    end
-
-    local activate = params.effect == EFFECT_TYPE_COOLDOWN_FINISHED
-    getWidgetByName("Trinket"):Show(activate)
-end
-
 local lastHp = 100
 
 function onWarriorTankEventUnitHealthChanged()
@@ -357,14 +340,11 @@ function initWarriorTank()
     addWidgetToList(createTextView(DEADLY_LUNGE, 90, 550, "7"))
     addWidgetToList(createTextView(BERSERKER, -10, 650, "s6"))
     addWidgetToList(createTextView(BLOODY_HARVEST, 90, 650, "s7"))
-    addWidgetToList(createTextView("Trinket", 40, 625, "*"))
     addWidgetToList(createTextView("Health", -200, 425, "[100]"))
     addWidgetToList(createTextView("Damage Pool", 275, 525, "0"))
     getWidgetByName("Damage Pool"):SetTextScale(0.75)
 
     initWarriorUtility(true)
-
-    setTextColor(getWidgetByName("Trinket"), COLOR_TRINKET)
 
     evaluateWarriorTankPriority()
 end

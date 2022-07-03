@@ -55,13 +55,6 @@ local onUnitManaChangedMap = {
     ENGINEER_DPS = nil
 }
 
-local onEventEquipmentItemEffectMap = {
-    WARRIOR_DPS = onWarriorEventEquipmentItemEffect,
-    WARRIOR_TANK = onWarriorTankEventEquipmentItemEffect,
-    PRIEST_DPS = nil,
-    ENGINEER_DPS = nil
-}
-
 local onEventAvatarWarriorDamagePoolChangedMap = {
     WARRIOR_DPS = nil,
     WARRIOR_TANK = onWarriorTankEventAvatarWarriorDamagePoolChanged,
@@ -131,10 +124,6 @@ function onUnitManaChanged(params)
     delegateEvent(params, onUnitManaChangedMap[currentSpec])
 end
 
-function onEventEquipmentItemEffect(params)
-    delegateEvent(params, onEventEquipmentItemEffectMap[currentSpec])
-end
-
 function onEventAvatarWarriorDamagePoolChanged(params)
     delegateEvent(params, onEventAvatarWarriorDamagePoolChangedMap[currentSpec])
 end
@@ -190,7 +179,6 @@ function init()
     common.RegisterEventHandler(onActionPanelElementChanged, "EVENT_ACTION_PANEL_ELEMENT_CHANGED")
     common.RegisterEventHandler(onWarriorCombatAdvantageChanged, "EVENT_AVATAR_WARRIOR_COMBAT_ADVANTAGE_CHANGED")
     common.RegisterEventHandler(onUnitManaChanged, "EVENT_UNIT_MANA_PERCENTAGE_CHANGED")
-    common.RegisterEventHandler(onEventEquipmentItemEffect, "EVENT_EQUIPMENT_ITEM_EFFECT")
     common.RegisterEventHandler(onTalentsChanged, "EVENT_TALENTS_CHANGED")
     common.RegisterEventHandler(onTalentsChanged, "EVENT_AVATAR_CLASS_FORM_CHANGED")
     common.RegisterEventHandler(onEventAvatarWarriorDamagePoolChanged, "EVENT_AVATAR_WARRIOR_DAMAGE_POOL_CHANGED")

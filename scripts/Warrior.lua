@@ -20,23 +20,11 @@ local CD_SETTER_MAP = {
 local currentCds = {}
 
 function onWarriorActionPanelElementEffect(params)
-    if params.effect < 1 or params.effect > 2 then
+    if shouldIgnoreActionPanelElementEffect(currentCds, params) then
         return
     end
 
-    if params.effect == 1 then
-        if params.duration < 1500 or currentCds[params.index] == true then
-            return
-        end
-        currentCds[params.index] = true
-    end
-
-    if params.effect == 2 then
-        if not currentCds[params.index] or currentCds[params.index] == false then
-            return
-        end
-        currentCds[params.index] = false
-    end
+    updateCurrentCds(currentCds, params)
     checkAllCDs(CD_SETTER_MAP, params)
     checkAllCDs(getWarriorUtilityCDMap(), params)
     evaluateWarriorPriority()
@@ -65,23 +53,6 @@ function onWarriorBuffRemoved(params)
     evaluateWarriorPriority()
 end
 
-function onWarriorEventEquipmentItemEffect(params)
-    if params.slot ~= DRESS_SLOT_TRINKET or params.slotType ~= ITEM_CONT_EQUIPMENT then
-        return
-    end
-
-    if params.effect ~= EFFECT_TYPE_COOLDOWN_STARTED and params.effect ~= EFFECT_TYPE_COOLDOWN_FINISHED then
-        return
-    end
-
-    if params.effect == EFFECT_TYPE_COOLDOWN_STARTED and params.duration < 1500 then
-        return
-    end
-
-    local activate = params.effect == EFFECT_TYPE_COOLDOWN_FINISHED
-    getWidgetByName("Trinket"):Show(activate)
-end
-
 function initWarrior()
     addWidgetToList(createTextView("Combat Advantage", 40, 500, getCombatAdvantage()))
     addWidgetToList(createTextView("Destructive Attack", 40, 425, "1"))
@@ -92,11 +63,8 @@ function initWarrior()
     addWidgetToList(createTextView("Deadly Lunge", 90, 550, "7"))
     addWidgetToList(createTextView("Berserker", -10, 650, "s6"))
     addWidgetToList(createTextView("Bloody Harvest", 90, 650, "s7"))
-    addWidgetToList(createTextView("Trinket", 40, 625, "*"))
 
     initWarriorUtility(false)
-
-    setTextColor(getWidgetByName("Trinket"), COLOR_TRINKET)
 
     evaluateWarriorPriority()
 end
