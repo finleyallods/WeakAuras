@@ -9,67 +9,78 @@ local aspectMAP = {
 local initMap = {
     WARRIOR_DPS = initWarrior,
     WARRIOR_TANK = initWarriorTank,
-    PRIEST_DPS = initHealer
+    PRIEST_DPS = initHealer,
+    ENGINEER_DPS = initEngineer,
 }
 
 local onBuffAddedMap = {
     WARRIOR_DPS = onWarriorBuffAdded,
     WARRIOR_TANK = onWarriorTankBuffAdded,
-    PRIEST_DPS = nil
+    PRIEST_DPS = nil,
+    ENGINEER_DPS = nil
 }
 
 local onBuffRemovedMap = {
     WARRIOR_DPS = onWarriorBuffRemoved,
     WARRIOR_TANK = onWarriorTankBuffRemoved,
-    PRIEST_DPS = nil
+    PRIEST_DPS = nil,
+    ENGINEER_DPS = nil
 }
 
 local onActionPanelElementEffectMap = {
     WARRIOR_DPS = onWarriorActionPanelElementEffect,
     WARRIOR_TANK = onWarriorTankActionPanelElementEffect,
-    PRIEST_DPS = onPriestActionPanelElementEffect
+    PRIEST_DPS = onPriestActionPanelElementEffect,
+    ENGINEER_DPS = onEngineerActionPanelElementEffect
 }
 
 local onActionPanelElementChangedMap = {
     WARRIOR_DPS = nil,
     WARRIOR_TANK = nil,
-    PRIEST_DPS = nil
+    PRIEST_DPS = nil,
+    ENGINEER_DPS = nil
 }
 
 local onWarriorCombatAdvantageChangedMap = {
     WARRIOR_DPS = onWarriorCombatAdvantageChanged,
     WARRIOR_TANK = onWarriorTankCombatAdvantageChanged,
-    PRIEST_DPS = nil
+    PRIEST_DPS = nil,
+    ENGINEER_DPS = nil
 }
 
 local onUnitManaChangedMap = {
     WARRIOR_DPS = onWarriorUnitManaChanged,
     WARRIOR_TANK = onWarriorTankUnitManaChanged,
-    PRIEST_DPS = nil
+    PRIEST_DPS = nil,
+    ENGINEER_DPS = nil
 }
 
 local onEventEquipmentItemEffectMap = {
     WARRIOR_DPS = onWarriorEventEquipmentItemEffect,
     WARRIOR_TANK = onWarriorTankEventEquipmentItemEffect,
-    PRIEST_DPS = nil
+    PRIEST_DPS = nil,
+    ENGINEER_DPS = nil
 }
 
 local onEventAvatarWarriorDamagePoolChangedMap = {
     WARRIOR_DPS = nil,
     WARRIOR_TANK = onWarriorTankEventAvatarWarriorDamagePoolChanged,
-    PRIEST_DPS = nil
+    PRIEST_DPS = nil,
+    ENGINEER_DPS = nil
 }
 
 local onEventUnitHealthChangedMap = {
     WARRIOR_DPS = nil,
     WARRIOR_TANK = onWarriorTankEventUnitHealthChanged,
-    PRIEST_DPS = nil
+    PRIEST_DPS = nil,
+    ENGINEER_DPS = nil
 }
 
 local onEventSecondTimerMap = {
     WARRIOR_DPS = nil,
     WARRIOR_TANK = onWarriorTankEventSecondTimer,
-    PRIEST_DPS = nil
+    PRIEST_DPS = nil,
+    ENGINEER_DPS = nil
 }
 
 function delegateEvent(params, delegate)

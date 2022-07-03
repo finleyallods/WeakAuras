@@ -6,6 +6,36 @@ function checkAllBuffs(buffs, params, activate)
     end
 end
 
+function shouldIgnoreActionPanelElementEffect(currentCds, params)
+    if params.effect < 1 or params.effect > 2 then
+        return true
+    end
+
+    if params.effect == 1 then
+        if params.duration < 1500 or currentCds[params.index] == true then
+            return true
+        end
+    end
+
+    if params.effect == 2 then
+        if not currentCds[params.index] or currentCds[params.index] == false then
+            return true
+        end
+    end
+
+    return false
+end
+
+function updateCurrentCds(currentCds, params)
+    if params.effect == 1 then
+        currentCds[params.index] = true
+    end
+
+    if params.effect == 2 then
+        currentCds[params.index] = false
+    end
+end
+
 function checkAllCDs(cds, params)
     local timeStamp = params.effect == 1 and common.GetLocalDateTime().overallMs or nil
 
