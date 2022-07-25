@@ -25,14 +25,33 @@ local function isBuffed (buffId)
     return false
 end
 
+function getMsOnUnitBuffed(unitId, buffName)
+    if not unitId then
+        return 0
+    end
+
+    for key, value in pairs(object.GetBuffs(unitId)) do
+        local buffInfo = object.GetBuffInfo(value)
+
+        if not buffInfo then
+            return 0
+        end
+
+        if userMods.FromWString(buffInfo.name) == buffName then
+            return buffInfo.remainingMs or 0
+        end
+    end
+
+    return 0
+end
 
 function getMsOnBuff(buffName)
     local buffId = state.buffs[buffName]
 
-    if not buffId or not isBuffed (buffId) then
+    if not buffId or not isBuffed(buffId) then
         return 0
     end
-    local buffInfo =  object.GetBuffInfo( buffId )
+    local buffInfo = object.GetBuffInfo(buffId)
 
     return buffInfo and buffInfo.remainingMs or 9
 end

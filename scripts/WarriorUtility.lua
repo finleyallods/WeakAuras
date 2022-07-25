@@ -15,6 +15,8 @@ local DAMAGE_REDUCTION = "Damage Reduction"
 local CHALLENGE = "Challenge"
 local GLINT = "Glint"
 local KICK = "Kick"
+local HACK = "Hack"
+local SLUGGISHNESS = "Sluggishness"
 
 function getAdrenalineSurgeTextColor()
     if hasBuff(ADRENALINE_SURGE) or hasBuff(TURTLE) or hasBuff(DEEP_DEFENSE) then
@@ -108,6 +110,22 @@ function getKickTextColor()
     return COLOR_NORMAL
 end
 
+function getHackTextColor()
+    if getMsOnUnitBuffed(avatar.GetTarget(), SLUGGISHNESS) > 1000 then
+        return COLOR_NONE
+    end
+
+    if getMsOnUnitBuffed(avatar.GetTarget(), SLUGGISHNESS) > 100 then
+        return COLOR_NORMAL
+    end
+
+    if isOnCd(HACK) or getEnergy() < 26 then
+        return COLOR_IMPOSSIBLE
+    end
+
+    return COLOR_GOOD
+end
+
 local damageReductionText = ""
 local lastDamageReductionText = ""
 function updateDamageReduction()
@@ -138,14 +156,16 @@ function evaluateUtility()
     utility[AIMED_SHOT] = getAimedShotTextColor()
     utility[GLINT] = getGlintTextColor()
     utility[KICK] = getKickTextColor()
+    utility[HARPOON] = getHarpoonTextColor()
+    utility[DEEP_DEFENSE] = getDeepDefenceTextColor()
+    utility[CHALLENGE] = getChallengeTextColor()
 
     if isTank then
         utility[BREAK] = getBreakTextColor()
         utility[DELIVERANCE] = getDeliveranceTextColor()
-        utility[HARPOON] = getHarpoonTextColor()
-        utility[DEEP_DEFENSE] = getDeepDefenceTextColor()
-        utility[CHALLENGE] = getChallengeTextColor()
         updateDamageReduction()
+    else
+        utility[HACK] = getHackTextColor()
     end
 
     displaySkills(utility)
@@ -161,6 +181,9 @@ function initWarriorUtility(initTank)
     addWidgetToList(createTextView(AIMED_SHOT, -285, 525, "s4"))
     addWidgetToList(createTextView(GLINT, -235, 575, "sR"))
     addWidgetToList(createTextView(KICK, -200, 550, "F"))
+    addWidgetToList(createTextView(HARPOON, -150, 550, "G"))
+    addWidgetToList(createTextView(CHALLENGE, -185, 575, "sF"))
+    addWidgetToList(createTextView(DEEP_DEFENSE, 250, 450, "+"))
 
     getWidgetByName(CHARGE):SetTextScale(0.75)
     getWidgetByName(MAD_LEAP):SetTextScale(0.65)
@@ -168,23 +191,21 @@ function initWarriorUtility(initTank)
     getWidgetByName(AIMED_SHOT):SetTextScale(0.65)
     getWidgetByName(GLINT):SetTextScale(0.65)
     getWidgetByName(KICK):SetTextScale(0.75)
+    getWidgetByName(HARPOON):SetTextScale(0.75)
+    getWidgetByName(DEEP_DEFENSE):SetTextScale(0.75)
+    getWidgetByName(CHALLENGE):SetTextScale(0.65)
 
     if isTank then
         addWidgetToList(createTextView(BREAK, 240, 550, "E"))
         addWidgetToList(createTextView(DELIVERANCE, 255, 575, "sE"))
-        addWidgetToList(createTextView(HARPOON, -150, 550, "G"))
-        addWidgetToList(createTextView(DEEP_DEFENSE, 250, 450, "+"))
         addWidgetToList(createTextView(DAMAGE_REDUCTION, 250, 450, ""))
-        addWidgetToList(createTextView(CHALLENGE, -185, 575, "sF"))
-
 
         getWidgetByName(BREAK):SetTextScale(0.75)
         getWidgetByName(DELIVERANCE):SetTextScale(0.65)
-        getWidgetByName(HARPOON):SetTextScale(0.75)
-        getWidgetByName(DEEP_DEFENSE):SetTextScale(0.75)
-        getWidgetByName(CHALLENGE):SetTextScale(0.65)
 
         setTextColor(getWidgetByName(DAMAGE_REDUCTION), COLOR_BUFF)
+    else
+        addWidgetToList(createTextView(HACK, 175, 425, "E"))
     end
 end
 
@@ -201,14 +222,17 @@ function getWarriorUtilityCDMap()
         [10] = KICK,
         [27] = AIMED_SHOT,
         [31] = MAD_LEAP,
-        [33] = GLINT
+        [33] = GLINT,
+        [34] = CHALLENGE,
+        [11] = HARPOON,
+        [49] = DEEP_DEFENSE
     }
+
     if isTank then
         cdMap[8] = BREAK
         cdMap[32] = DELIVERANCE
-        cdMap[34] = CHALLENGE
-        cdMap[11] = HARPOON
-        cdMap[49] = DEEP_DEFENSE
+    else
+        cdMap[8] = HACK
     end
 
     return cdMap
