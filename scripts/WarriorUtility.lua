@@ -215,22 +215,22 @@ end
 
 function getWarriorUtilityCDMap()
     local cdMap = {
-        [37] = TURTLE,
-        [38] = ADRENALINE_SURGE,
         [7] = CHARGE,
         [9] = MIGHTY_LEAP,
         [10] = KICK,
-        [27] = AIMED_SHOT,
-        [31] = MAD_LEAP,
-        [33] = GLINT,
-        [34] = CHALLENGE,
         [11] = HARPOON,
-        [49] = DEEP_DEFENSE
+        [15] = AIMED_SHOT,
+        [19] = MAD_LEAP,
+        [21] = GLINT,
+        [22] = CHALLENGE,
+        [37] = TURTLE,
+        [38] = ADRENALINE_SURGE,
+        [43] = DEEP_DEFENSE
     }
 
     if isTank then
         cdMap[8] = BREAK
-        cdMap[32] = DELIVERANCE
+        cdMap[20] = DELIVERANCE
     else
         cdMap[8] = HACK
     end

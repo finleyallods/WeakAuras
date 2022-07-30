@@ -226,8 +226,8 @@ local CD_SETTER_MAP = {
     [2] = TRAMP,
     [4] = VICIOUS_SPIN,
     [6] = DEADLY_LUNGE,
-    [29] = BERSERKER,
-    [30] = BLOODY_HARVEST
+    [17] = BERSERKER,
+    [18] = BLOODY_HARVEST
 }
 
 local currentCds = {}

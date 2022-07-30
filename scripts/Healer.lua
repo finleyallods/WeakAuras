@@ -29,17 +29,17 @@ function onPriestActionPanelElementEffect(params)
         wtCleansingFlame:Show(true)
     end
 
-    if params.effect == 1 and params.index == 30 then
+    if params.effect == 1 and params.index == 18 then
         wtFervidPrayer:Show(false)
     end
-    if params.effect == 2 and params.index == 30 then
+    if params.effect == 2 and params.index == 18 then
         wtFervidPrayer:Show(true)
     end
 
-    if params.effect == 1 and params.index == 29 then
+    if params.effect == 1 and params.index == 17 then
         wtFrenzy:Show(false)
     end
-    if params.effect == 2 and params.index == 29 then
+    if params.effect == 2 and params.index == 17 then
         wtFrenzy:Show(true)
     end
 
