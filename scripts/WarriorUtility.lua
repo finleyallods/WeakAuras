@@ -51,6 +51,10 @@ function getDeepDefenceTextColor()
 end
 
 function getChargeTextColor()
+    if getEnergy() == 100  and can(CHARGE) then
+        return COLOR_GOOD
+    end
+
     if getEnergy() < 23 or isOnCd(CHARGE) then
         return COLOR_IMPOSSIBLE
     end
@@ -175,14 +179,14 @@ function initWarriorUtility(initTank)
     isTank = initTank
     addWidgetToList(createTextView(TURTLE, 260, 440, "^"))
     addWidgetToList(createTextView(ADRENALINE_SURGE, 260, 470, "v"))
-    addWidgetToList(createTextView(CHARGE, -300, 550, "Q"))
-    addWidgetToList(createTextView(MAD_LEAP, -285, 575, "sQ"))
-    addWidgetToList(createTextView(MIGHTY_LEAP, -250, 550, "R"))
-    addWidgetToList(createTextView(AIMED_SHOT, -285, 525, "s4"))
-    addWidgetToList(createTextView(GLINT, -235, 575, "sR"))
-    addWidgetToList(createTextView(KICK, -200, 550, "F"))
-    addWidgetToList(createTextView(HARPOON, -150, 550, "G"))
-    addWidgetToList(createTextView(CHALLENGE, -185, 575, "sF"))
+    addWidgetToList(createTextView(CHARGE, -225, 525, "Q"))
+    addWidgetToList(createTextView(MAD_LEAP, -210, 550, "sQ"))
+    addWidgetToList(createTextView(MIGHTY_LEAP, -175, 525, "R"))
+    addWidgetToList(createTextView(AIMED_SHOT, -210, 500, "s4"))
+    addWidgetToList(createTextView(GLINT, -160, 550, "sR"))
+    addWidgetToList(createTextView(KICK, -225, 600, "F"))
+    addWidgetToList(createTextView(HARPOON, -175, 600, "G"))
+    addWidgetToList(createTextView(CHALLENGE, -210, 625, "sF"))
     addWidgetToList(createTextView(DEEP_DEFENSE, 250, 450, "+"))
 
     getWidgetByName(CHARGE):SetTextScale(0.75)

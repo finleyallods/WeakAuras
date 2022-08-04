@@ -1,7 +1,7 @@
 local SECOND = 1000
 
-local ENERGY_DESTRUCTIVE_ATTACK = 40
-local ENERGY_FRACTURE = 25
+local ENERGY_DESTRUCTIVE_ATTACK = 33
+local ENERGY_FRACTURE = 23
 
 local FLAMING_BLADE = "Flaming Blade"
 local DESTRUCTIVE_ATTACK = "Destructive Attack"
