@@ -15,7 +15,7 @@ local BLOODY_HARVEST = "Bloody Harvest"
 local TITANS_RAGE = "Titan’s Rage"
 
 function getRapidBlowTextColorAsTank()
-    if shouldTramp() or shouldBuildCombatAdvantage() then
+    if shouldTramp() or shouldBuildCombatAdvantageAsTank() or hasBuff(TITANS_RAGE) then
         return COLOR_NONE
     end
 
@@ -23,26 +23,27 @@ function getRapidBlowTextColorAsTank()
         return COLOR_GOOD
     end
 
-    if hasBuff(BLOODY_HARVEST) and can(DEADLY_LUNGE) then
+    if can(DEADLY_LUNGE) then
         return COLOR_NONE
-    end
-
-    if can(BLOODY_HARVEST) then
-        return COLOR_SECOND
     end
 
     return avatar.GetWarriorCombatAdvantage() >= 20 and COLOR_NORMAL or COLOR_IMPOSSIBLE
 end
 
 function getDeadlyLungeTextColorAsTank()
-    if isOnCd(DEADLY_LUNGE) then
+    if isOnCd(DEADLY_LUNGE) or hasBuff(TITANS_RAGE) then
         return COLOR_NONE
     end
 
-    if shouldTramp() or shouldBuildCombatAdvantage() or hasBuff(TITANS_RAGE) then
-        return COLOR_NONE
+    if hasBuff(BLOODY_HARVEST) then
+        return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_GOOD or COLOR_IMPOSSIBLE
     end
-    return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_NORMAL or COLOR_IMPOSSIBLE
+
+    if can(BLOODY_HARVEST) and avatar.GetWarriorCombatAdvantage() >= 55 and not shouldTramp() then
+        return COLOR_SECOND
+    end
+
+    return avatar.GetWarriorCombatAdvantage() >= 25 and COLOR_BAD or COLOR_NONE
 end
 
 function getBloodyHarvestTextColorAsTank()
@@ -124,8 +125,8 @@ function shouldBuildCombatAdvantageAsTank()
         return true
     end
 
-    if not hasBuff(TITANS_RAGE) and can(DEADLY_LUNGE) and avatar.GetWarriorCombatAdvantage() >= 25 then
-        return false
+    if hasBuff(TITANS_RAGE) then
+        return true
     end
 
     if avatar.GetWarriorCombatAdvantage() < 55 then
@@ -154,6 +155,10 @@ function evaluateWarriorTankPriority()
 
     if shouldBuildCombatAdvantageAsTank() then
         priority[getCombatAdvantageBuilderAsTank()] = COLOR_NORMAL
+    end
+
+    if hasBuff(TITANS_RAGE) and getMsOnBuff(TITANS_RAGE) / SECOND < 2 and can(VICIOUS_SPIN) then
+        priority[getCombatAdvantageBuilderAsTank()] = COLOR_NONE
     end
 
     priority[DEADLY_LUNGE] = getDeadlyLungeTextColorAsTank()
@@ -297,7 +302,7 @@ function onWarriorTankEventUnitHealthChanged()
     end
 
     if hp ~= lastHp then
-        widget:SetVal("value", "["..tostring(hp).."]")
+        widget:SetVal("value", "[" .. tostring(hp) .. "]")
         setTextColor(widget, color)
     end
 end
