@@ -95,7 +95,7 @@ function getDeliveranceTextColor()
 end
 
 function getHarpoonTextColor()
-    return isOnCd(HARPOON) and COLOR_IMPOSSIBLE or COLOR_NORMAL
+    return isOnCd(HARPOON) and COLOR_NONE or COLOR_NORMAL
 end
 
 function getGlintTextColor()
@@ -107,7 +107,11 @@ function getChallengeTextColor()
 end
 
 function getKickTextColor()
-    if avatar.GetWarriorCombatAdvantage() < 15 or isOnCd(KICK) then
+    if isOnCd(KICK) then
+        return COLOR_NONE
+    end
+
+    if avatar.GetWarriorCombatAdvantage() < 15 then
         return COLOR_IMPOSSIBLE
     end
 
@@ -184,8 +188,7 @@ function initWarriorUtility(initTank)
     addWidgetToList(createTextView(MIGHTY_LEAP, -175, 525, "R"))
     addWidgetToList(createTextView(AIMED_SHOT, -210, 500, "s4"))
     addWidgetToList(createTextView(GLINT, -160, 550, "sR"))
-    addWidgetToList(createTextView(KICK, -225, 600, "F"))
-    addWidgetToList(createTextView(HARPOON, -175, 600, "G"))
+    addWidgetToList(createTextView(HARPOON, 210, 450, "G"))
     addWidgetToList(createTextView(CHALLENGE, -210, 625, "sF"))
     addWidgetToList(createTextView(DEEP_DEFENSE, 250, 450, "+"))
 
@@ -194,22 +197,23 @@ function initWarriorUtility(initTank)
     getWidgetByName(MIGHTY_LEAP):SetTextScale(0.75)
     getWidgetByName(AIMED_SHOT):SetTextScale(0.65)
     getWidgetByName(GLINT):SetTextScale(0.65)
-    getWidgetByName(KICK):SetTextScale(0.75)
-    getWidgetByName(HARPOON):SetTextScale(0.75)
     getWidgetByName(DEEP_DEFENSE):SetTextScale(0.75)
     getWidgetByName(CHALLENGE):SetTextScale(0.65)
 
     if isTank then
         addWidgetToList(createTextView(BREAK, 240, 550, "E"))
+        addWidgetToList(createTextView(KICK, -225, 600, "F"))
         addWidgetToList(createTextView(DELIVERANCE, 255, 575, "sE"))
         addWidgetToList(createTextView(DAMAGE_REDUCTION, 250, 450, ""))
 
         getWidgetByName(BREAK):SetTextScale(0.75)
         getWidgetByName(DELIVERANCE):SetTextScale(0.65)
+        getWidgetByName(KICK):SetTextScale(0.75)
 
         setTextColor(getWidgetByName(DAMAGE_REDUCTION), COLOR_BUFF)
     else
-        addWidgetToList(createTextView(HACK, 175, 425, "E"))
+        addWidgetToList(createTextView(HACK, 160, 425, "E"))
+        addWidgetToList(createTextView(KICK, 185, 450, "F"))
     end
 end
 

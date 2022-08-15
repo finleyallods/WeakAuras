@@ -20,6 +20,10 @@ function getJaggedSliceTextColor()
 end
 
 function getTreacherousStrikeTextColor()
+    if isOnCd(TREACHEROUS_STRIKE) and getMsOnCd(TREACHEROUS_STRIKE) < 500 and avatar.GetWarriorCombatAdvantage() >= 20  then
+        return COLOR_SECOND
+    end
+
     if isOnCd(TREACHEROUS_STRIKE) then
         return COLOR_NONE
     end
