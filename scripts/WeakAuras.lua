@@ -109,6 +109,10 @@ function onBuffRemoved(params)
 end
 
 function onActionPanelElementEffect(params)
+    if params.effect == 1 and params.duration < 1500  then
+        return
+    end
+
     delegateEvent(params, onActionPanelElementEffectMap[currentSpec])
 end
 

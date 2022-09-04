@@ -10,6 +10,7 @@
         <Item href="scripts/State.lua"/>
         <Item href="scripts/PriorityUtility.lua"/>
         <Item href="scripts/Engineer.lua"/>
+        <Item href="scripts/HealerUtility.lua"/>
         <Item href="scripts/Healer.lua"/>
         <Item href="scripts/WarriorUtility.lua"/>
         <Item href="scripts/WarriorPriority.lua"/>

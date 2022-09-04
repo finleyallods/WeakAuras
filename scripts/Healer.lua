@@ -46,9 +46,13 @@ function onPriestActionPanelElementEffect(params)
     if params.effect == 1 and params.index == 5 and isHeavenlySmiteCD() then
         wtHeavenlySmite:Show(false)
     end
+
     if params.effect == 2 and params.index == 5 and not isHeavenlySmiteCD() then
         wtHeavenlySmite:Show(true)
     end
+
+    checkAllCDs(getHealerUtilityCDMap(), params)
+    evaluateHealerUtility()
 end
 
 function setHeavenlySmiteSpellIndex()
@@ -63,6 +67,10 @@ function setHeavenlySmiteSpellIndex()
     sendMessage("Could not find Heavenly Smite in spell book.")
 end
 
+function evaluateHealerPriority()
+    evaluateHealerUtility()
+end
+
 function initHealer()
     myId = avatar.GetId()
     setHeavenlySmiteSpellIndex()
@@ -74,4 +82,6 @@ function initHealer()
     wtHeavenlySmite = createTextView("HeavenlySmite", -10, 550, "6")
     wtFrenzy = createTextView("Frenzy", -10, 650, "s6")
     wtFervidPrayer = createTextView("FervidPrayer", 90, 650, "s7")
+
+    initHealerUtility(false)
 end
